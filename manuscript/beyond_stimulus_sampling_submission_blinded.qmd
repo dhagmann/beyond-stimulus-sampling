@@ -1,0 +1,391 @@
+---
+title: "Beyond Stimulus Sampling: A Harness for Designing and Auditing Experimental Stimuli"
+shorttitle: "Beyond Stimulus Sampling"
+author:
+  - name: "Anonymous"
+    corresponding: true
+    affiliations:
+      - name: "Anonymous institution"
+abstract: >-
+  Experiments using hypothetical, researcher-generated scenarios and messages
+  are common in organizational research. But writing stimuli that meaningfully
+  manipulate a construct is challenging, and successful manipulations may
+  unintentionally change other relevant attributes. We introduce a software
+  harness for large language models (LLMs) to construct and audit such
+  materials in a transparent and reproducible way. Our harness generates
+  message families that introduce variation in a focal attribute of interest,
+  evaluates intended contrasts and construct spillover, and revises materials
+  that fail prespecified criteria. The workflow and resulting documentation
+  can be adapted to different constructs and organizational settings and is
+  agnostic to the LLM used. We illustrate the application with a design
+  examining whether expressing uncertainty increases persuasiveness, showing
+  the problem of construct spillover and how the harness supports the
+  development of more selective manipulations.
+keywords:
+  - generative artificial intelligence
+  - stimulus sampling
+  - construct validity
+  - experimental methods
+date: today
+date-format: "D MMMM YYYY"
+format:
+  apaquarto-pdf:
+    documentmode: man
+    floatsintext: true
+    mask: true
+    pdf-engine: xelatex
+    fontsize: 12pt
+    mainfont: Tinos
+    mainfontfallback: false
+    keep-tex: false
+    include-in-header:
+      text: |
+        \usepackage{eso-pic}
+        \raggedbottom
+        \let\footnotesize\normalsize
+        \AtBeginEnvironment{CSLReferences}{\linespread{1.55}\selectfont}
+        \makeatletter
+        \def\fps@table{!htbp}
+        % Pandoc already suppresses the inner longtable counter.
+        \AtBeginDocument{%
+          \patchcmd{\endlongtable}
+            {\ifLTpatch@caption\else\addtocounter{table}{-1}\fi}
+            {}{}{}%
+        }
+        \makeatother
+  apaquarto-html:
+    embed-resources: true
+    toc: false
+    html-math-method: plain
+bibliography: beyond_stimulus_sampling_references.bib
+csl: _extensions/wjschne/apaquarto/apa.csl
+link-citations: true
+number-sections: false
+execute:
+  echo: false
+  message: false
+  warning: false
+editor:
+  markdown:
+    wrap: 72
+suppress-author: true
+suppress-affiliation: true
+suppress-author-note: true
+suppress-orcid: true
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+analysis_files <- file.path("data", c("study1_analysis.csv", "study2_analysis.csv", "sample_flow.csv"))
+if (all(file.exists(analysis_files))) {
+  s1 <- read.csv(analysis_files[1], stringsAsFactors = FALSE)
+  s2 <- read.csv(analysis_files[2], stringsAsFactors = FALSE)
+  sample_flow <- read.csv(analysis_files[3], stringsAsFactors = FALSE)
+  n_no_message <- sample_flow$no_message[sample_flow$study == "study2"]
+  stopifnot(nrow(s1) == 600L, nrow(s2) == 3185L, n_no_message == 15L,
+            sample_flow$completed[sample_flow$study == "study2"] == 3200L,
+            all(is.finite(s1$persuasion)), all(is.finite(s2$persuasion)),
+            all(is.finite(s1$perceived_certainty)),
+            all(s1$certainty %in% c("low", "high")),
+            all(s2$certainty %in% c("low", "high")),
+            all(s2$brashness %in% c("low", "high")))
+} else {
+  s1_raw <- read.csv(
+    "../data/data_raw/Persuasion - HighLow Guns Ratings (248593).csv",
+    check.names = FALSE, stringsAsFactors = FALSE
+  )
+  names(s1_raw) <- trimws(names(s1_raw))
+  politics_columns <- which(names(s1_raw) == "politics")
+  stopifnot(length(politics_columns) == 2L)
+  names(s1_raw)[politics_columns] <- c("politics_survey", "politics_binary")
+  s1 <- s1_raw[-c(1, 2), ]
+  s1 <- subset(s1, Finished == "True" & Status == "IP Address")
+  stopifnot(all(s1$politics_binary %in% c("left", "right")))
+  s1$certainty <- tolower(trimws(s1$condition))
+  s1$persuasion <- ifelse(s1$politics_binary == "left", -1, 1) * (
+    as.numeric(s1$post_value_1) - as.numeric(s1$prior_value_1)
+  )
+  likert <- c("Not at all" = 1, "Slightly" = 2, "Somewhat" = 3,
+              "Very" = 4, "Extremely" = 5)
+  s1$perceived_certainty <- unname(likert[s1$focal_certain])
+  stopifnot(nrow(s1) == 600L, all(is.finite(s1$persuasion)),
+            all(is.finite(s1$perceived_certainty)),
+            all(s1$certainty %in% c("low", "high")),
+            mean(s1$perceived_certainty[s1$certainty == "high"]) >
+              mean(s1$perceived_certainty[s1$certainty == "low"]))
+  
+  s2_raw <- read.csv(
+    "../data/data_raw/Drawbridge Persuasion - Abortion & Gun Control (293332) - w Brashness.csv",
+    check.names = FALSE, stringsAsFactors = FALSE
+  )
+  s2_raw <- s2_raw[-c(1, 2), ]
+  s2_completed <- subset(s2_raw, Finished == "True" & Status == "IP Address")
+  no_message <- is.na(s2_completed$essay) | trimws(s2_completed$essay) == ""
+  n_no_message <- sum(no_message)
+  s2 <- s2_completed[!no_message, ]
+  s2$certainty <- tolower(trimws(s2$confidence))
+  s2$brashness <- tolower(trimws(s2$brashness))
+  direction <- ifelse(startsWith(s2$essay_stance, "Many"), 1,
+                      ifelse(startsWith(s2$essay_stance, "Few"), -1, NA_real_))
+  s2$persuasion <- direction * (
+    as.numeric(s2$posterior_1) - as.numeric(s2$prior_1)
+  )
+  stopifnot(nrow(s2_completed) == 3200L, n_no_message == 15L,
+            nrow(s2) == 3185L, all(is.finite(s2$persuasion)),
+            all(s2$certainty %in% c("low", "high")),
+            all(s2$brashness %in% c("low", "high")))
+}
+
+summarize_values <- function(values) {
+  n <- length(values)
+  data.frame(mean = mean(values), n = n,
+             half_ci = qt(0.975, n - 1) * sd(values) / sqrt(n))
+}
+summarize_factor <- function(data, variable) {
+  do.call(rbind, lapply(c("low", "high"), function(level) {
+    cbind(level = level, summarize_values(data$persuasion[data[[variable]] == level]))
+  }))
+}
+s1_certainty <- summarize_factor(s1, "certainty")
+s2_certainty <- summarize_factor(s2, "certainty")
+s2_brashness <- summarize_factor(s2, "brashness")
+s2_cells <- do.call(rbind, lapply(c("low", "high"), function(brashness) {
+  do.call(rbind, lapply(c("low", "high"), function(certainty) {
+    cbind(certainty = certainty, brashness = brashness,
+          summarize_values(s2$persuasion[s2$certainty == certainty &
+                                          s2$brashness == brashness]))
+  }))
+}))
+mean_fmt <- function(summary, level) {
+  sprintf("%.1f", summary$mean[summary$level == level])
+}
+n_fmt <- function(n) format(n, big.mark = ",", scientific = FALSE, trim = TRUE)
+
+# Study 1's preregistered comparison is a two-sample t-test.
+s1_test <- t.test(s1$persuasion[s1$certainty == "low"],
+                  s1$persuasion[s1$certainty == "high"])
+s1_apa <- papaja::apa_print(s1_test)$statistic
+
+s1_certainty_check <- t.test(
+  s1$perceived_certainty[s1$certainty == "high"],
+  s1$perceived_certainty[s1$certainty == "low"]
+)
+s1_certainty_check_apa <- papaja::apa_print(s1_certainty_check)$statistic
+s1_certainty_rating_means <- tapply(s1$perceived_certainty, s1$certainty, mean)
+
+# Marginal comparisons describe the Study 2 plotted means. Its preregistered
+# factorial OLS model is retained below, with conventional standard errors.
+s2_certainty_test <- t.test(s2$persuasion[s2$certainty == "low"],
+                            s2$persuasion[s2$certainty == "high"])
+s2_brashness_test <- t.test(s2$persuasion[s2$brashness == "high"],
+                            s2$persuasion[s2$brashness == "low"])
+s2_certainty_apa <- papaja::apa_print(s2_certainty_test)$statistic
+s2_brashness_apa <- papaja::apa_print(s2_brashness_test)$statistic
+
+# Study 2's preregistered factorial OLS model uses conventional standard errors.
+# Effect coding gives main contrasts averaged equally across the other factor.
+s2$C <- ifelse(s2$certainty == "high", 0.5, -0.5)
+s2$B <- ifelse(s2$brashness == "high", 0.5, -0.5)
+fit <- lm(persuasion ~ C * B, data = s2)
+effect_ci <- confint(fit, level = 0.95)
+stopifnot(all(is.finite(coef(fit))), all(is.finite(effect_ci)))
+```
+
+Organizational scientists design experiments with hypothetical scenarios, descriptions of
+people, and open-ended messages to study a wide range of topics. Participants in such
+research may judge the fairness of a manager who provides feedback to an employee, report whether they would
+trust a coworker, or assess whether an organization acted fairly [@Aguinis2014]. Related designs are widely used
+in psychology, management, political science, and other fields
+[@Chester2021; @Fong2023]. Their value depends on whether the materials
+convey the intended difference strongly enough to support a meaningful test.
+A researcher asking whether certainty affects persuasion, for example, must
+write messages that readers perceive as differing meaningfully in certainty.
+To test whether a message influenced the dimension of interest, researchers can
+rely on pretesting and manipulation checks.
+
+Even when that contrast is strong, however, other relevant features may also change. A more certain author may present stronger evidence, dismiss disagreement, or seem less willing to compromise. We term this *construct spillover*: the intended construct changes along with additional features the experimenter did not intend to vary. When readers respond differently, the experiment cannot establish which attribute caused the difference: the intended focal attribute or an unintended spillover feature. Manipulation strength and construct isolation therefore require separate assessments.
+
+A single stimulus per treatment creates further vulnerability because a finding may be explained not by the variation of interest but by incidental wording that may be difficult to detect even when materials are public. Stimulus sampling offers one way to reduce this concern. In this approach, researchers generate multiple stimuli for each experimental treatment to examine relationships across multiple messages [@Wells1999; @Judd2012]. A stimulus plot can then show whether an effect is driven by a single outlier stimulus, for example. However, this does not guarantee a meaningful target contrast or the absence of systematic differences in other constructs that could persist across multiple stimuli.
+
+Generative AI can help address both challenges by producing and revising many versions of a stimulus. We introduce a software *harness* that coordinates LLM calls and researcher decisions from construct definition through generation, evaluation, and revision.[^github] We focus here on text-based stimuli and provide a complete recipe: prompts, assessment criteria, revision rules, and an audit report. Researchers adapt it by interactively specifying their question, context, and criteria as part of a chat, without rewriting software. Building on AI-assisted stimulus development [@vanBerlo2024; @Lechuga2026], this reusable research infrastructure applies across constructs and language models. We illustrate it with two experiments of certainty and persuasion on politically charged topics.
+
+[^github]: The harness is available via Github, along with the data and code to reproduce the analyses in this paper: <https://github.com/dhagmann/beyond-stimulus-sampling>.
+
+# Generating and Evaluating Stimuli
+
+Many constructs that are instantiated via written text involve a package of linguistic cues and are therefore difficult to define precisely. Consider a hypothetical design in which we want to vary a manager's certainty when advising an employee to apply for the promotion. Panel A of @tbl-certainty provides a high-certainty reference message. Panel B hedges both feedback and advice. Panel C preserves specific accomplishments but qualifies the praise and sounds less supportive. Panel D preserves the positive performance assessment but expresses uncertainty in the advice to apply for the promotion. Which message is appropriate requires researcher judgment: weaker support may belong to one definition of an uncertain recommendation and constitute spillover under another. Researchers must specify intended contrasts and which attributes should be held fixed, a laborious task for one stimulus and difficult to scale when sampling dozens.
+
+::: {#tbl-certainty tbl-colwidths="[50,50]"}
+
+|                                                              |                                                              |
+| :----------------------------------------------------------- | :----------------------------------------------------------- |
+| **A. High certainty (Reference).** On the last project, you kept the team on schedule even when unexpected problems arose. Your regular updates helped everyone understand what needed to happen next. Those results show that you can take on greater responsibility. Your performance is exceptional and you are ready for a promotion. You should put yourself forward. | **B. Hedging feedback and recommendation.** On the last project, you appear to have kept the team on schedule even when unexpected problems arose. Your regular updates seem to have helped everyone understand what needed to happen next. Those results make it seem like you can take on greater responsibility. Your performance seems to be exceptional and you may be ready for a promotion. Maybe you could put yourself forward. |
+| **C. Reduced praise and support.** On the last project, you kept the team on schedule even when unexpected problems arose. Your regular updates helped everyone understand what needed to happen next. Those results may be a sign that you can take on greater responsibility. I suspect that your performance is exceptional and perhaps you are ready for a promotion. I am unsure, but maybe you could think about putting yourself forward if you think it is a good idea. | **D. Hedging recommendation.** On the last project, you kept the team on schedule even when unexpected problems arose. Your regular updates helped everyone understand what needed to happen next. Those results suggest you could take on greater responsibility. Your performance is exceptional and I think that you may be ready for a promotion. You may want to consider putting yourself forward. |
+
+Alternative expressions of uncertainty in advice about applying for the promotion. Panel A provides the high-certainty reference message. Panel B hedges both feedback and advice. Panel C qualifies the praise and sounds less supportive. Panel D keeps the praise but expresses uncertainty in the advice to apply for the promotion.
+
+:::
+
+These alternatives show why one-shot prompting cannot establish stimulus validity: messages B-D all vary uncertainty but in different ways. Structured prompts can help generate stimuli and identify confounds [@Simonsohn2025], but variation and construct spillover still need independent evaluation. To illustrate this challenge, we present unpublished research on certainty and persuasion. ChatGPT generated five supporting points for each position on whether gun sales without background checks are common, then wrote essays consisting of five paragraphs using those points. We used four messages, one per certainty condition (high and low certainty) and argument direction (a high share or a low share).
+
+We then recruited `r n_fmt(nrow(s1))` participants from Prolific who
+estimated the share of guns sold without a background check before and 
+after reading either the high or low certainty message, arguing in a direction against their existing view. 
+Readers rated the author of the high certainty
+message as more certain than that of the low certainty message
+(`r sprintf("%.2f", s1_certainty_rating_means[["high"]])` vs.
+`r sprintf("%.2f", s1_certainty_rating_means[["low"]])` on a five-point scale,
+`r s1_certainty_check_apa`),
+showing successful manipulation of the construct. The key finding is that those who read the
+less-certain message were more persuaded
+(`r mean_fmt(s1_certainty, "low")` vs.
+`r mean_fmt(s1_certainty, "high")` percentage points of belief change,
+`r s1_apa`. See @fig-persuasion, Panel A).
+
+A closer reading of the messages, however, reveals a broader contrast beyond
+certainty. The high-certainty messages also dismissed
+opposing views, referring, for example, to "stubborn myths circulating among the
+misinformed."[^1] We describe this interpersonal stance as *brashness*.
+Random assignment identified an effect of the messages, but could not
+separate certainty from their treatment of those with disagreeing views.
+
+[^1]: See [Appendix A](beyond_stimulus_sampling_technical_supplement_blinded.pdf#apx-study1-messages) for one high- and low-certainty message pair.
+
+The harness makes these distinctions explicit before generation: researchers define the construct and context, then classify related dimensions proposed by the model as intended features or spillovers. For receptiveness, for example, hedging and acknowledging agreement might be intended features [@Yeomans2020], while concessions and praise might not. For our persuasion application, the harness builds pools of arguments and argumentation styles. Styles describe how an argument is organized, such as opening with an example. The harness then randomly samples from both pools. Each draw is used for every condition, forming a *stimulus family*: messages that share a position, arguments, and style while varying the intended constructs. Repeated draws introduce variation across families without systematically tying content or style to a treatment.
+
+The process then draws on separate writer and judge subagents that use separate contexts to limit copying between writers and anchoring between judges. A coordinating agent supplies writers with shared inputs and assigned conditions, then passes their stimuli to judges without treatment labels or other judges' ratings. It applies the criteria to returned ratings and concerns, requests revisions if necessary, and has the complete family reassessed prior to approval (see @fig-harness). Instructions, drafts, ratings, and decisions are saved to an audit report before participant data collection (see [Appendix C](beyond_stimulus_sampling_technical_supplement_blinded.pdf#apx-stimulus-audit)).
+
+Returning to our experiment on uncertainty and persuasion, we can now easily and
+independently vary certainty and brashness across two topics: gun sales and regret following an abortion.
+Within each topic and each argument direction (high and low estimate), we generated 15 arguments and 8 argumentation
+styles. Each essay family consisted of four messages (high/low certainty, high/low brashness) that
+used the same five arguments and argumentation style from this set. We generated 20 families for each combination of topic and argument direction: 80 families with four messages each, for a total of 320 messages (see @tbl-certainty-brashness for excerpts from one such family, with the full essays shown in [Appendix B](beyond_stimulus_sampling_technical_supplement_blinded.pdf#apx-reference-family)).
+We then recruited `r n_fmt(nrow(s2))` participants from Prolific who again made percentage estimates, read
+one counter-attitudinal message, and provided a second estimate. Now, authors expressing high certainty were more persuasive than uncertain authors
+(`r mean_fmt(s2_certainty, "high")` vs.
+`r mean_fmt(s2_certainty, "low")` percentage points,
+`r s2_certainty_apa`), and brashness led to less persuasion
+(`r mean_fmt(s2_brashness, "high")` vs.
+`r mean_fmt(s2_brashness, "low")` points,
+`r s2_brashness_apa`. See @fig-persuasion, Panel B).
+
+<!-- Table source: materials/certainty_brashness_293332/generation/essays_final_2x2.json.
+Guns, liberal stance, quad_index=0. All four full messages match the participant
+export for 293332 after HTML normalization. Excerpts are verbatim, with omissions
+marked. The study labels here follow this methods illustration.
+Low/low: paragraph 2 sentences 1–2; paragraph 5 sentence 4.
+High/low: paragraph 2 sentences 1–2; paragraph 5 sentences 6–7.
+Low/high: paragraph 2 sentences 4–6. High/high: paragraph 2 sentences 1–2 and 5. -->
+
+::: {#tbl-certainty-brashness tbl-colwidths="[12,44,44]" apa-note="Excerpts from one four-message family used in Study 2. The full messages are shown in [Appendix B](beyond_stimulus_sampling_technical_supplement_blinded.pdf#apx-reference-family)."}
+
+| Certainty | Low brashness | High brashness |
+|:---|:---|:---|
+| Low | One reason for this, it appears, is a gap in federal law that arguably leaves a wide category of transactions unscreened. Under current federal statute, private sales between individuals — meaning sales not conducted through a licensed dealer — are evidently not required to involve a background check. […] Reasonable people may weigh this evidence differently, and I respect that. | Only a limited number of states have stepped in to enact universal background check laws of their own. That means residents of the majority of states can, it appears, legally purchase firearms from private sellers with no screening whatsoever. If you think this is a minor footnote, you're kidding yourself—perhaps willfully so. |
+| High | The most significant gap is, without question, the federal law governing private sales. Federal law does not require background checks when a firearm is sold between two private individuals rather than through a licensed dealer. […] People who believe otherwise are not foolish; they are simply working with an incomplete picture. The complete picture, however, leaves no room for doubt. | The reality is that federal law does not require background checks for private sales between individuals. This is not a matter of interpretation or debate; it is established legal fact. […] If you still think few guns escape background checks, you are clinging to an illusion that ignores what the law plainly allows. |
+
+A Stimulus Family Independently Varying Certainty and Brashness
+
+:::
+
+::: {apa-note="Bars show mean belief change toward the message's position, in percentage points. Error bars show 95% confidence intervals. Panel A: Study 1, N = 600. Panel B: Study 2, N = 3,185, pooled across topics."}
+
+```{r}
+#| label: fig-persuasion
+#| fig-width: 6.5
+#| fig-height: 3.8
+#| fig-pos: ht
+#| fig-cap: "Certainty and Persuasion Before and After Separating Brashness"
+#| fig-alt: "Panel A shows greater mean persuasion for low-certainty messages in Study 1. Panel B shows greater persuasion for high-certainty messages at both levels of brashness in Study 2."
+
+old_par <- par(no.readonly = TRUE)
+layout(matrix(c(1, 2), nrow = 1), widths = c(0.85, 1.35))
+colors <- c("#617E94", "#243F56")
+par(family = "sans", cex = 0.85, mgp = c(2.7, 0.6, 0), tcl = -0.25)
+ylim <- c(0, 18)
+
+decorate_bars <- function(centers, summary) {
+  axis(2, at = seq(0, 16, 4), las = 1, cex.axis = 0.85)
+  abline(h = 0, col = "#58636D", lwd = 0.6)
+  arrows(as.vector(centers), summary$mean - summary$half_ci,
+         as.vector(centers), summary$mean + summary$half_ci,
+         code = 3, angle = 90, length = 0.04, lwd = 1.05)
+  text(as.vector(centers), 1.0,
+       sprintf("%.1f", summary$mean),
+       adj = c(0.5, 0), col = "white", cex = 0.8)
+}
+
+par(mar = c(4.8, 4.0, 2.4, 0.6))
+centers <- barplot(s1_certainty$mean,
+                  names.arg = NULL,
+                  col = colors, border = NA, ylim = ylim, axes = FALSE,
+                  space = 0.7, width = 0.7, cex.names = 0.85)
+decorate_bars(centers, s1_certainty)
+axis(1, at = as.vector(centers), labels = c("Low\ncertainty", "High\ncertainty"),
+     tick = FALSE, line = 0.9, cex.axis = 0.85)
+mtext("A  Study 1: certainty only", side = 3, adj = 0, line = 0.7,
+      font = 2, cex = 0.90)
+mtext("Belief change (percentage points)", side = 2, line = 2.7,
+      las = 0, cex = 0.9)
+
+par(mar = c(4.8, 2.7, 2.4, 0.3))
+heights <- matrix(s2_cells$mean, nrow = 2)
+centers <- barplot(heights, beside = TRUE,
+                  names.arg = NULL,
+                  col = colors, border = NA, ylim = ylim, axes = FALSE,
+                  space = c(0.2, 0.8), width = 0.7, cex.names = 0.85)
+decorate_bars(centers, s2_cells)
+axis(1, at = colMeans(centers), labels = c("Low\nbrashness", "High\nbrashness"),
+     tick = FALSE, line = 0.9, cex.axis = 0.85)
+mtext("B  Study 2: certainty × brashness", side = 3,
+      adj = 0, line = 0.7, font = 2, cex = 0.92)
+legend("topright", legend = c("Low certainty", "High certainty"),
+       fill = colors, border = NA, bty = "n", cex = 0.78,
+       inset = c(0.01, 0.01))
+layout(1)
+par(old_par)
+```
+
+:::
+
+::: {apa-note="The coordinator routes work between independent subagents, requests revisions, and raises unexpected issues for researcher review."}
+
+```{r}
+#| label: fig-harness
+#| fig-cap: "Human and Agents in the Harness"
+#| fig-alt: "The researcher defines the construct, stimulus context, construct spillover, and criteria. A coordinating agent routes work among writer and judge subagents with separate contexts and potentially different models, requests revisions, and raises unexpected issues with the researcher. The output is experimental stimuli and an audit report."
+#| fig-pos: ht
+#| out-width: 100%
+
+knitr::include_graphics(if (knitr::is_latex_output())
+  "figures/harness_workflow.pdf" else "figures/harness_workflow.svg")
+```
+
+:::
+
+```{=latex}
+\clearpage
+```
+
+# Discussion
+
+Designing text stimuli for experiments is an art with substantial challenges: messages have to meaningfully shift perceptions on a focal construct while holding fixed potential confounds from spillover. Stimulus sampling can reduce dependence on particular wording, but it does not ensure that the intended construct is isolated. Our persuasion studies illustrate this distinction: the initial finding that low certainty messages are more persuasive
+did not hold once we orthogonally varied brashness. The harness we introduce here generates controlled stimulus families that closely follow one another within one set but offer meaningful variation across families, then audits and revises them using prespecified criteria for intended contrasts and construct spillover.
+
+The next development phase will evaluate agreement between LLM judges' assessments and independent human judgments. The central risk is that judges may accept contrasts readers do not perceive or miss relevant spillover. We will also examine performance across organizational settings and stimulus types beyond persuasive essays. For example, the workflow could separate candor from disrespect in performance feedback, or empathy from apology in responses to employee concerns, with trust, coordination, or willingness to speak up as outcomes.
+
+LLM responses and ratings can vary across runs, and models change over time. As with researchers writing stimuli or assistants coding them, individual outputs may not be exactly reproducible. However, documenting the workflow supports conceptual replication by letting other researchers and models follow the same process without having to try and reconstruct the original researcher's reasoning that may not have been documented.
+
+The harness makes stimulus development easier by guiding key decisions and automating generation, screening, revision, and documentation. Researchers can generate many varied families and inspect a short audit report (see [Appendix C](beyond_stimulus_sampling_technical_supplement_blinded.pdf#apx-stimulus-audit) for an example). As reusable research infrastructure, the package lets others inspect these decisions and adapt or rerun the workflow, requiring less manual drafting and recordkeeping and facilitating conceptual replications.
+
+{{< pagebreak >}}
+
+# References {.unnumbered}
+
+::: {#refs}
+:::
+
+
+{{< pagebreak >}}

@@ -42,6 +42,7 @@ format:
       text: |
         \usepackage{eso-pic}
         \raggedbottom
+        \let\footnotesize\normalsize
         \AtBeginEnvironment{CSLReferences}{\linespread{1.55}\selectfont}
         \makeatletter
         \def\fps@table{!htbp}
@@ -210,7 +211,7 @@ A single stimulus per treatment creates further vulnerability because a finding 
 
 Generative AI can help address both challenges by producing and revising many versions of a stimulus. We introduce a software *harness* that coordinates LLM calls and researcher decisions from construct definition through generation, evaluation, and revision.[^github] We focus here on text-based stimuli and provide a complete recipe: prompts, assessment criteria, revision rules, and an audit report. Researchers adapt it by interactively specifying their question, context, and criteria as part of a chat, without rewriting software. Building on AI-assisted stimulus development [@vanBerlo2024; @Lechuga2026], this reusable research infrastructure applies across constructs and language models. We illustrate it with two experiments of certainty and persuasion on politically charged topics.
 
-[^github]: The harness is available via GitHub: <https://github.com/dhagmann/beyond-stimulus-sampling>.
+[^github]: The harness is available via Github, along with the data and code to reproduce the analyses in this paper: <https://github.com/dhagmann/beyond-stimulus-sampling>.
 
 # Generating and Evaluating Stimuli
 

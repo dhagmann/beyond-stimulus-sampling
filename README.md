@@ -8,6 +8,8 @@ This is a private research prototype by David Hagmann and Zachary Wojtowicz. Mod
 
 The package accompanies [*Beyond Stimulus Sampling: A Harness for Designing and Auditing Experimental Stimuli*](manuscript/beyond_stimulus_sampling.pdf). The [blinded review copy](manuscript/beyond_stimulus_sampling_blinded.pdf), editable Quarto sources, references, figure assets, and minimal analysis data are included. See the [manuscript reproduction instructions](manuscript/README.md).
 
+For submission, use the [main-only blinded manuscript](manuscript/beyond_stimulus_sampling_submission_blinded.pdf) with the [technical supplement and Appendices A–C](manuscript/beyond_stimulus_sampling_technical_supplement_blinded.pdf).
+
 ![The researcher, coordinating process, and separate writer and judge contexts](manuscript/figures/harness_workflow.svg)
 
 ## Start with your research question

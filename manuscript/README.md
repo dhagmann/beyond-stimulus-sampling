@@ -41,6 +41,25 @@ The blinded source removes author and correspondence metadata, suppresses author
 
 The main source is the editable version. Regenerate the blinded source with `prepare_blinded.py` after editing it; do not edit both copies independently.
 
+## Submission files and technical supplement
+
+The two-file submission package consists of:
+
+- `beyond_stimulus_sampling_submission_blinded.pdf`: the main manuscript without the full-message and audit appendices.
+- `beyond_stimulus_sampling_technical_supplement_blinded.pdf`: three pages of harness documentation followed by Appendices A–C, including the six complete messages and the one-page audit.
+
+The manuscript's prose is unchanged when the appendices are moved to the supplement. Main-copy appendix links point to named destinations in the companion PDF; keep the filenames together when viewing locally. The original complete manuscript remains available for internal review.
+
+Both submission files use 12-point text, one-inch margins, and double spacing. The main manuscript's reference spacing is slightly reduced so its references fit on one page. The audit is a full-page graphic sized to fit the supplement's text area. Its data and ratings are unchanged.
+
+From the repository root, build both submission files with:
+
+```sh
+python manuscript/build_technical_supplement.py --render
+```
+
+Edit the technical narrative in `beyond_stimulus_sampling_technical_supplement_blinded.qmd` above the `BEGIN SUPPORTING MATERIALS` marker. The helper regenerates material below that marker from the current main manuscript, preserves the messages, prepares the main-only copy, and removes PDF author metadata. Its output includes the manuscript's requested GitHub link, which identifies the repository owner.
+
 ## Data and assets
 
 See [data/README.md](data/README.md) for variable definitions, sample selection, and the fields intentionally omitted from the research exports. Only three small CSV files are needed. `scripts/prepare_manuscript_data.py` can regenerate them when the original exports are available locally; it does not preserve response order or copy survey identifiers.

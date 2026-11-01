@@ -1,0 +1,263 @@
+---
+title: "Technical Supplement: Beyond Stimulus Sampling"
+format:
+  pdf:
+    documentclass: article
+    pdf-engine: xelatex
+    fontsize: 12pt
+    papersize: letter
+    mainfont: Tinos
+    geometry:
+      - margin=1in
+    include-in-header:
+      text: |
+        \usepackage{setspace}
+        \usepackage{eso-pic}
+        \usepackage{fancyhdr}
+        \AtBeginDocument{\doublespacing}
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[L]{\normalsize Beyond Stimulus Sampling: Technical Supplement}
+        \fancyhead[R]{\normalsize\thepage}
+        \renewcommand{\headrulewidth}{0pt}
+        \setlength{\headheight}{15pt}
+        \setlength{\parindent}{0.5in}
+        \setlength{\parskip}{0pt}
+        \raggedbottom
+        \makeatletter
+        \renewcommand{\maketitle}{%
+          \thispagestyle{fancy}%
+          \begin{center}
+          \textbf{Technical Supplement}\\
+          \textbf{Beyond Stimulus Sampling: A Harness for Designing}\\
+          \textbf{and Auditing Experimental Stimuli}
+          \end{center}
+        }
+        \renewcommand\section{\@startsection{section}{1}{\z@}%
+          {-0.6\baselineskip}{0.25\baselineskip}{\normalfont\normalsize\bfseries}}
+        \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+          {-0.4\baselineskip}{0.2\baselineskip}{\normalfont\normalsize\bfseries}}
+        \makeatother
+number-sections: false
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+# 1. Specify the construct boundary
+
+The researcher begins with the construct, speaker, audience, and setting. The
+harness proposes a definition, rating anchors, and related attributes. The
+researcher edits these suggestions and classifies each attribute as a facet of
+the focal construct, a separate experimental factor, a protected attribute,
+an expected consequence, or outside scope. Facets enter the focal definition;
+factors receive their own treatment levels; protected attributes are screened
+for spillover. Consequences are rated diagnostically and excluded from writer
+objectives and acceptance decisions. This prevents selecting messages to
+eliminate the response the experiment seeks to explain. Definitions, decisions,
+and rationales are saved in the study specification.
+
+# 2. Sample inputs, then construct families
+
+For each context, the researcher supplies the substantive material. The harness
+proposes pools of arguments and organizational styles, such as opening with an
+example. Researchers review both pools before generation. Each family receives
+a random sample of arguments without replacement and one style. These inputs
+are shared across every combination of treatment levels; later families receive
+new draws. Required content remains fixed in addition to the sampled arguments.
+The seed controls these draws and the order of messages shown to judges, while
+the manifest records the realized samples. Revisions use the original draw.
+Sampling allows repeated combinations and does not make a convenience set of
+contexts representative.
+
+```{=latex}
+\clearpage
+```
+
+# 3. Generate and assess in separate contexts
+
+Each writer call receives the shared inputs, its assigned treatment, and
+instructions to express that perspective throughout the message. It does not
+receive other conditions' drafts. Each judge receives the complete family with
+shuffled neutral IDs, shared substantive content, construct definitions, and
+rating anchors. Treatment labels, dimension roles, and other judges' ratings
+are hidden. Separate contexts reduce copying and anchoring. Writer and judge
+providers are configured separately, allowing assessment across models. Judges
+rate constructs, content fidelity, fluency, naturalness, and family-level
+content equivalence. They also flag concerns with exact quotations, which the
+harness checks against the corresponding message.
+
+# 4. Apply prespecified criteria
+
+For a pair differing only in the assigned level of factor $f$, let $d_{jk}$ be
+judge $j$'s high-minus-low rating difference on dimension $k$. With $J$ judges,
+the focal contrast must
+satisfy $J^{-1}\sum_j d_{jf}\geq\tau$, with no judge reversing its direction.
+The minimum increases proportionally with the distance between ordered levels.
+For every off-target factor or protected attribute, spillover must satisfy
+$J^{-1}\sum_j |d_{jk}|\leq\epsilon$; opposing judgments therefore cannot cancel.
+Consequence differences do not determine acceptance.
+
+Starting values on a 1–7 scale are $\tau=1.5$, $\epsilon=0.75$, and minimum
+mean content fidelity, fluency, and family content equivalence of 5. Naturalness
+below 4 prompts review rather than rejection. Word limits and allowable length
+spread are specified separately. A material issue flagged by one judge causes
+revision by default; this consensus rule is configurable. These values are
+editable starting criteria, not validated equivalence bounds.
+
+```{=latex}
+\clearpage
+```
+
+# 5. Revise and preserve the audit
+
+The coordinating process revises cells implicated in a failed check: one
+message for a local problem, both messages for a failed contrast, or the whole
+family for a family-level failure. Writers receive their own draft and targeted
+feedback. All judges then reassess the complete family. The default allows
+three attempts; an exhausted family remains explicitly incomplete. Export
+requires a complete corpus unless partial export is requested. The saved record
+contains the specification, sampled inputs, prompts, drafts, blinded mappings,
+ratings, concerns, and decisions, including rejected attempts. Hashes check
+internal consistency; they do not authenticate an archive's origin.
+
+# 6. Reproduce and evaluate the procedure
+
+The repository README documents setup, generation, reporting, and export.
+The command `bss validate` reconstructs saved requests and screening decisions
+without model calls. Archive the matching software version with each run.
+Regenerating through a hosted model may yield different text or ratings, and
+models change over time. The documented workflow supports conceptual
+replication; model screening still requires human pretesting and review for
+omitted spillovers.
+
+Appendices A and B reproduce the messages discussed in the manuscript.
+Appendix C illustrates an archived audit with its own printed cutoffs; its
+cross-axis column reports the absolute mean judge difference. The reusable
+engine uses the mean absolute difference defined above. The additional warmth,
+competence, and trust scores were obtained separately for illustration and did
+not change the original acceptance decisions. The repository's reduced data
+reproduce the manuscript analyses without participant identifiers or raw survey
+exports. The offline demonstration uses explicitly synthetic messages and
+ratings.
+
+<!-- BEGIN SUPPORTING MATERIALS: regenerated by build_technical_supplement.py -->
+
+```{=latex}
+\clearpage
+```
+
+# Appendix A. Study 1 Message Pair {#apx-study1-messages}
+
+These two messages were used in Study 1 and argue that few gun sales occur
+without a background check. The study also included the opposite argument
+direction.
+
+## High certainty
+
+In the heated debate about gun control, it's time to lay down the facts and dispel the stubborn myths circulating among the misinformed. Let's get one thing straight: the idea that a vast majority of gun purchases are made without background checks is not just exaggerated—it's outright false.
+
+Federal law is clear and uncompromising in its mandate that all federally licensed firearms dealers must conduct rigorous background checks on potential buyers before any gun sale can be completed. This isn't a suggestion; it's a strict requirement enforced across the nation, ensuring that criminals and those deemed unfit to own firearms are systematically weeded out.
+
+But let’s not stop there. Many states, dissatisfied with merely following federal guidelines, have taken matters into their own hands to fortify these regulations. These states extend the reach of background checks to include private sales and transfers, effectively closing gaps that might be exploited by those looking to circumvent the law. Critics often paint a picture of lax regulations, but the reality is that state laws have built a formidable barrier against unauthorized gun ownership, demonstrating a commitment to safety and responsibility that extends far beyond federal directives.
+
+Opponents often hinge their arguments on outdated notions of gun owners and sellers as renegades who flout the law, but the current landscape of gun ownership is characterized by high levels of compliance and awareness. Responsible gun owners and dealers are not the caricatures portrayed by gun control zealots; they are, in fact, some of the most stringent adherents to legal stipulations, often going above and beyond to ensure the integrity of every transaction.
+
+The myth of the “gun show loophole” is another favorite scare tactic used to inflame public opinion. Yes, private sellers at gun shows aren’t required by federal law to conduct background checks, but here’s what the fearmongers won’t tell you: the majority of sellers at these events are licensed dealers who are, indeed, bound by law to run background checks. The narrative of a lawless marketplace is a gross distortion of reality, peddled by those who have either failed to understand the facts or choose to ignore them for the sake of political expediency.
+
+Finally, let's ground this discussion in hard evidence. Numerous surveys and studies have consistently shown that the vast majority of gun transactions are conducted with full compliance to background check requirements. This isn't conjecture; it's concrete data debunking the alarmist rhetoric that too often dominates the conversation around gun sales. Those clinging to the myth of rampant unchecked gun purchases are either woefully uninformed or deliberately deceptive. It’s high time they are confronted with the truth and called out for their contributions to a baseless, fear-driven dialogue that distorts public understanding and policy.
+
+## Low certainty
+
+When discussing the topic of firearms and background checks in the United States, it's essential to recognize the genuine concerns that arise from the possibility of guns being purchased without proper checks. However, it’s also crucial to consider the substantial measures already in place that ensure the safety and legality of gun transactions.
+
+Under federal law, all firearms dealers holding a Federal Firearms License (FFL) are required to perform background checks on potential buyers before completing a sale. This mandate covers the vast majority of gun sales in the country, ensuring that individuals who are prohibited from owning firearms—such as those with certain criminal convictions or mental health issues—are unable to legally purchase guns. In addition to federal requirements, many states have taken further steps to tighten regulations. These state laws often extend the necessity for background checks to private sales and transfers, including those conducted at gun shows and through private parties. This layer of regulation helps to close gaps that might otherwise exist, significantly reducing the number of firearms transactions that occur without a background check.
+
+The effectiveness of these laws is reflected in the high level of compliance among both gun sellers and buyers, most of whom are committed to legal and responsible gun ownership. This responsible majority understands the importance of background checks in maintaining public safety and preventing crime, and they adhere rigorously to these laws.
+
+It’s important to address concerns regarding gun shows and online sales, often pointed to as loopholes in the system. While it's true that these have been avenues for unchecked sales in the past, changes in both public awareness and state regulations have greatly diminished these risks. Many sellers at gun shows are indeed licensed dealers who conduct mandatory background checks, and online gun sales typically require the buyer to complete the transaction through a licensed dealer, thus undergoing a background check.
+
+Surveys and research studies consistently show that the majority of gun transactions in the U.S. involve background checks. Estimates suggest that the percentage of sales made without background checks is quite small when compared to the overall volume of gun sales. This data is encouraging because it demonstrates a broad adherence to laws designed to keep our communities safe.
+
+In conclusion, while the concerns about guns being purchased without background checks are valid, the reality is that a comprehensive system of laws and regulations is effectively keeping such occurrences to a minimum. Through continuous public education and legal enforcement, we can further ensure that the sale and ownership of firearms are conducted safely and legally.
+
+```{=latex}
+\clearpage
+```
+
+# Appendix B. Full Messages From the Reference Family {#apx-reference-family}
+
+This appendix reproduces the four complete messages excerpted in
+Table 2 of the main manuscript. The family takes the position that many guns
+sold in the United States are sold without a background check. The
+versions share the same argument inputs and vary in assigned certainty
+and brashness.
+
+<!-- Source: materials/certainty_brashness_293332/generation/essays_final_2x2.json;
+issue=guns, politics=liberal, quad_index=0. -->
+
+## Low certainty, low brashness
+
+It is entirely reasonable to believe that the background check system in the United States covers most gun sales, and thoughtful people hold this view for understandable reasons. The National Instant Criminal Background Check System is, after all, a real and functioning institution, and licensed dealers do run checks on millions of transactions every year. That is genuinely worth recognizing. However, when one looks more closely at the full landscape of how firearms change hands in this country, it seems possible that the picture is more complex than it first appears, and that many sales may fall outside the reach of this system entirely.
+
+One reason for this, it appears, is a gap in federal law that arguably leaves a wide category of transactions unscreened. Under current federal statute, private sales between individuals — meaning sales not conducted through a licensed dealer — are evidently not required to involve a background check. This is not a fringe loophole or a contested legal theory; it seems to be a well-documented feature of the existing regulatory framework. It is possible that many Americans are simply unaware of this distinction, and one can hardly blame anyone for assuming that all gun sales go through the same process. The reality, however, may be that a significant number of firearms are transferred person to person with no screening whatsoever.
+
+This gap appears to be compounded by the fact that only a limited number of states have enacted universal background check laws on their own. Residents of the majority of states, it seems, can legally purchase firearms through private channels without any screening. The patchwork nature of state-level regulation perhaps means that the experience of buying a gun varies dramatically depending on where one lives, and for many Americans, the background check requirement may simply not apply to a private purchase.
+
+Gun shows arguably represent one of the more visible settings where this dynamic plays out. Many sellers at these events appear to operate without Federal Firearms Licenses, which would seem to mean they can complete transactions without conducting background checks. The ATF has itself acknowledged, it seems, the difficulty of enforcing background check requirements on private sales, since these transactions leave little to no paper trail and are nearly impossible to monitor. This is not a criticism of the hardworking people at these agencies — they face a genuinely difficult task — but it does suggest that enforcement may be structurally limited in ways that matter.
+
+Beyond the legal private market, there also appear to be black market and underground channels through which firearms are transferred entirely outside any regulatory framework. These sales, by their very nature, involve no screening of any kind. When one considers all of these pathways together — the federal private sale exemption, limited state-level universal check laws, gun show transactions, enforcement challenges, and underground markets — it seems plausible that many guns sold in the United States do change hands without a background check. Reasonable people may weigh this evidence differently, and I respect that. But the full picture, tentatively considered, appears to point toward a system with more gaps than many of us might initially assume.
+
+## High certainty, low brashness
+
+It is completely understandable to believe that the background check system in the United States effectively covers most gun sales, and thoughtful people hold this view for good reasons. After all, licensed firearms dealers are undeniably required to conduct background checks on every transaction, and the NICS system processes millions of these checks each year. That is a real and meaningful part of the picture, and anyone who points to it is drawing on solid ground. However, the full picture clearly reveals that many firearms change hands in this country without any background check whatsoever, through multiple well-documented channels that operate legally and illegally outside the reach of that system.
+
+The most significant gap is, without question, the federal law governing private sales. Federal law does not require background checks when a firearm is sold between two private individuals rather than through a licensed dealer. This is not a contested claim or a matter of interpretation — it is an established legal reality. Only a limited number of states have enacted universal background check laws to close this gap, which means that residents of the majority of states can legally purchase firearms from private sellers with no screening at all. Reasonable people may assume that federal law covers all sales uniformly, and it is easy to see why that assumption feels natural, but the evidence proves otherwise.
+
+Gun shows serve as a clear illustration of how this gap functions in practice. At these events, many sellers operate without Federal Firearms Licenses, meaning they are legally classified as private sellers. Transactions at their tables can be completed without any background check requirement. These are not small or hidden marketplaces — they are well-attended, widely advertised, and represent a major channel through which firearms are transferred outside the screening system. The reality of what happens at these events is thoroughly documented.
+
+The Bureau of Alcohol, Tobacco, Firearms and Explosives has itself acknowledged the difficulty of enforcing background check requirements on private sales. These transactions leave little to no paper trail and are nearly impossible to monitor. This is not a speculative concern; it is an operational reality that the agency charged with enforcement has openly recognized. Without documentation, without records, and without oversight, there is no mechanism to ensure that private buyers have been screened. The enforcement challenge is undeniable.
+
+Beyond these legal private sales, black market and underground gun sales operate entirely outside any regulatory framework. These transactions represent an additional and substantial channel through which firearms are transferred without any screening whatsoever. No background check, no record, no oversight of any kind touches these sales. When we consider the full landscape — the federal private sale exemption, the limited adoption of universal background check laws across states, the vibrant marketplace of gun shows, the enforcement challenges the ATF faces, and the entirely unregulated underground market — the conclusion is obvious. Many guns sold in the United States are sold without a background check. People who believe otherwise are not foolish; they are simply working with an incomplete picture. The complete picture, however, leaves no room for doubt.
+
+## Low certainty, high brashness
+
+It seems reasonable, at first glance, to believe that the background check system in the United States catches most firearm sales in its net—and if you hold that view, you're not entirely wrong about the mechanics of licensed dealer transactions. Federal Firearms Licensees are indeed required to run checks, and that part of the system appears to function more or less as intended. But if you think that accounts for the full picture, you've frankly been fooling yourself. The evidence suggests that the reality is far messier, and anyone still clinging to the comforting notion that "few" guns slip through without screening probably hasn't bothered to look at how firearms actually change hands in this country.
+
+Consider, for a moment, what federal law actually requires—and more importantly, what it does not. Private sales between individuals are not, under federal statute, subject to background check requirements. This is not some fringe loophole that critics have invented; it is a well-documented gap in the regulatory framework. Only a limited number of states have stepped in to enact universal background check laws of their own. That means residents of the majority of states can, it appears, legally purchase firearms from private sellers with no screening whatsoever. If you think this is a minor footnote, you're kidding yourself—perhaps willfully so.
+
+Gun shows offer a particularly telling illustration of this gap, and anyone dismissing their significance hasn't thought it through. These events serve as major marketplaces where many private sellers operate without Federal Firearms Licenses. Transactions at these venues can seemingly be completed with nothing more than a handshake and cash. No form, no phone call, no check. It is possible that some defenders of the current system will wave this away as insignificant, but the sheer volume of firearms that arguably move through these channels makes that dismissal look naïve at best.
+
+The enforcement picture appears equally sobering. The ATF has itself acknowledged the difficulty of policing private sales, since these transactions leave little to no paper trail and seem nearly impossible to monitor. Without records, without oversight, the system may well be blind to a substantial portion of transfers. And that is before one even considers black market and underground sales, which operate entirely outside any regulatory framework. These channels represent an additional avenue through which firearms are apparently transferred with no screening whatsoever. Pretending this shadow market is negligible is the kind of head-in-the-sand thinking that deserves no patience.
+
+So where does this leave the confident assumption that few guns are sold without background checks? In tatters, it would seem. Between the federal private-sale exemption, the patchwork of state laws, the realities of gun show commerce, and the underground market, there appear to be many avenues through which firearms change hands unscreened. The evidence, taken together, suggests that the background check system—however well it functions for licensed dealers—arguably misses a significant share of gun sales. If you've been telling yourself otherwise, it is perhaps time to stop repeating comfortable fictions and start reckoning with what the regulatory landscape actually looks like.
+
+## High certainty, high brashness
+
+It is an undeniable fact that many guns sold in the United States change hands without any background check whatsoever, and if you believe otherwise, you simply haven't been paying attention. Now, let's be fair for a moment: there is something the opposing view gets right. Licensed firearms dealers are indeed required to run background checks through the National Instant Criminal Background Check System, and millions of transactions every year do go through this process. That much is true, and no one disputes it. But if you stop there and conclude that few guns are sold without screening, you have made a foolish mistake — one that ignores the gaping holes in the system that are clearly documented and well understood by anyone who has bothered to look.
+
+The reality is that federal law does not require background checks for private sales between individuals. This is not a matter of interpretation or debate; it is established legal fact. When one private citizen sells a firearm to another, no federal statute compels either party to conduct a screening. Only a limited number of states have enacted universal background check laws to close this gap, which means residents of the majority of states can legally purchase firearms from private sellers with zero screening. If you still think few guns escape background checks, you are clinging to an illusion that ignores what the law plainly allows.
+
+Gun shows serve as major marketplaces where this private sale gap plays out on a massive scale, and anyone who dismisses this hasn't thought the issue through. Many sellers at these events operate without Federal Firearms Licenses, which means they are under no obligation to run a background check before completing a transaction. These are not rare or marginal occurrences. They happen at events across the country, week after week. The ATF itself has acknowledged the difficulty of enforcing background check requirements on private sales, since these transactions leave little to no paper trail and are nearly impossible to monitor. There is no doubt about this — the agency charged with enforcement has openly admitted the challenge.
+
+Beyond what happens in the legal marketplace, black market and underground gun sales operate entirely outside any regulatory framework. These transactions represent an additional and substantial channel through which firearms are transferred without any screening whatsoever. Stolen guns, straw purchases funneled into illegal networks, and person-to-person deals conducted in back alleys and parking lots — none of these involve a background check, and it is obvious to anyone thinking clearly that pretending these channels are negligible is deeply irresponsible.
+
+The evidence proves, without question, that many firearms sold in this country bypass the background check system entirely. Legal private sales, gun show transactions, and underground markets collectively ensure that a significant number of guns reach buyers with no screening at all. If you walked into this believing that few guns are sold without a background check, it is time to abandon that comfortable fiction. The facts are staring you in the face, and continuing to ignore them does not make them go away. Anyone still holding onto the notion that background checks capture nearly all gun sales ought to know better — because the truth is right there, plainly visible, for anyone willing to see it.
+
+
+```{=latex}
+\clearpage
+```
+
+# Appendix C. Example Stimulus Audit {#apx-stimulus-audit}
+
+```{=latex}
+\noindent\makebox[\textwidth][c]{%
+\includegraphics[width=\textwidth,height=8.5in,keepaspectratio]{stimulus_family_audit_submission.pdf}%
+}
+```
+
+```{=html}
+<p><a href="stimulus_family_audit_blinded.pdf">One-page construct and spillover audit (PDF)</a></p>
+```
