@@ -1,0 +1,36 @@
+{
+  "notice": "Synthetic software demonstration. Texts are illustrative, ratings invented, and researcher decisions hypothetical. No empirical results or model judgments are represented.",
+  "study": {
+    "schema_version": "1.0",
+    "title": "SYNTHETIC DEMO: procedural transparency in a workplace announcement",
+    "context": "A manager announces a new scheduling procedure to employees. Study how transparency about the procedure affects responses to the announcement.",
+    "focal_construct": "transparency",
+    "dimensions": [
+      {"id": "transparency", "name": "Procedural transparency", "definition": "How explicitly the message explains the steps and basis of a scheduling decision.", "low_anchor": "The procedural steps and decision basis are left implicit.", "high_anchor": "The procedural steps and decision basis are explained explicitly.", "role": "factor", "facets": [{"name": "Explanatory explicitness", "definition": "How directly the message articulates procedural information."}], "levels": [{"id": "low", "instruction": "Communicate the scheduling arrangement while leaving its decision process implicit."}, {"id": "high", "instruction": "Communicate the scheduling arrangement and explicitly describe the supplied decision process."}]},
+      {"id": "care", "name": "Interpersonal consideration", "definition": "How respectful and considerate the manager sounds toward employees.", "low_anchor": "Dismissive of employee concerns.", "high_anchor": "Respectful and considerate of employee concerns.", "role": "protected", "hold_constant": "Use the same neutral and respectful tone in each version."},
+      {"id": "trust", "name": "Trust in the manager", "definition": "How willing an employee might be to rely on this manager after reading the message.", "low_anchor": "Very unwilling to rely on the manager.", "high_anchor": "Very willing to rely on the manager.", "role": "consequence"}
+    ],
+    "candidate_review": [
+      {"construct": {"name": "Explanatory explicitness"}, "classification": "same_construct", "rationale": "For this hypothetical question, explicit explanation is part of how transparency is defined.", "dimension_id": "transparency"},
+      {"construct": {"name": "Interpersonal consideration"}, "classification": "spillover", "rationale": "A respectful tone is a distinct attribute that could change employee responses independently of transparency.", "dimension_id": "care"},
+      {"construct": {"name": "Trust in the manager"}, "classification": "consequence", "rationale": "Trust is an intended downstream response; suppressing differences would preselect the outcome.", "dimension_id": "trust"}
+    ],
+    "blueprints": [{"id": "scheduling", "context": "Write an internal announcement about the next month's rotating weekend schedule.", "required_content": ["The rotating weekend schedule begins next month.", "Employees submit availability on Friday.", "Assignments are based on submitted availability and required coverage.", "The schedule will be posted on Monday."]}],
+    "families_per_context": 1,
+    "seed": 2026,
+    "writing_requirements": ["Use ordinary workplace language."],
+    "generation": {"min_words": 45, "max_words": 130, "max_word_range": 55, "max_attempts": 2, "writer": {"kind": "command", "model": "synthetic-demo-only", "command": ["bss-synthetic-demo-not-a-live-provider"]}, "judges": [{"name": "demo_judge_a", "kind": "command", "model": "synthetic-demo-only", "command": ["bss-synthetic-demo-not-a-live-provider"]}, {"name": "demo_judge_b", "kind": "command", "model": "synthetic-demo-only", "command": ["bss-synthetic-demo-not-a-live-provider"]}]},
+    "assessment": {"scale_min": 1, "scale_max": 7, "min_target_difference": 1.5, "max_spillover": 0.75, "min_content_fidelity": 5, "min_fluency": 5, "naturalness_review_below": 4, "critical_issue_consensus": 1},
+    "researcher_review": {"completed": true, "reviewer": "Hypothetical researcher; synthetic demonstration only"}
+  },
+  "texts": {
+    "low": "The rotating weekend schedule begins next month. Please send your availability by Friday so that we can arrange the coverage required for the month. We will use the availability you submit when making those arrangements. You will be able to find the completed schedule on Monday, when it is posted for the team.",
+    "high_spillover": "The rotating weekend schedule begins next month. Submit your availability by Friday. First, we collect everyone's availability. We then assign weekend shifts using that information and the coverage the team requires. The finished schedule will be posted on Monday. This explains the process clearly enough, so there is no need for further questions about how assignments are made.",
+    "high": "The rotating weekend schedule begins next month. Please send your availability by Friday. The process has two steps: we first collect the availability submitted by everyone on the team, and then make weekend assignments using that information and the coverage required for the month. We will post the resulting schedule on Monday for the team to review."
+  },
+  "ratings": {
+    "low": {"transparency": 2, "care": 5, "trust": 3},
+    "high_spillover": {"transparency": 6, "care": 2, "trust": 4},
+    "high": {"transparency": 6, "care": 5, "trust": 6}
+  }
+}

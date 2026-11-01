@@ -1,0 +1,147 @@
+{
+  "schema_version": "1.0",
+  "title": "EXAMPLE FOR REVIEW: certainty and brashness as independent factors",
+  "context": "A manager recommends a pilot of flexible working arrangements to employees. Vary epistemic certainty and interpersonal brashness independently while preserving the policy and supporting points.",
+  "focal_construct": "certainty",
+  "dimensions": [
+    {
+      "id": "certainty",
+      "name": "Epistemic certainty",
+      "definition": "The strength of the speaker's expressed confidence in the truth of the recommendation's supporting claims, holding the underlying evidence constant.",
+      "low_anchor": "Tentative confidence; acknowledges that the conclusion may be mistaken.",
+      "high_anchor": "Firm confidence in the conclusion, without claiming new evidence or dismissing other people.",
+      "role": "factor",
+      "levels": [
+        {
+          "id": "low",
+          "instruction": "Express tentative confidence in the recommendation and its supporting inferences."
+        },
+        {
+          "id": "high",
+          "instruction": "Express firm confidence in the recommendation and its supporting inferences."
+        }
+      ]
+    },
+    {
+      "id": "brashness",
+      "name": "Interpersonal brashness",
+      "definition": "How presumptuous and dismissive of alternative views the speaker sounds, distinct from confidence in whether the claims are true.",
+      "low_anchor": "Modest and open to other views, regardless of the certainty of the claims.",
+      "high_anchor": "Presumptuous and dismissive of alternative views, regardless of the certainty of the claims.",
+      "role": "factor",
+      "levels": [
+        {
+          "id": "low",
+          "instruction": "Use a modest and open interpersonal stance without changing the assigned epistemic certainty."
+        },
+        {
+          "id": "high",
+          "instruction": "Use a presumptuous and dismissive interpersonal stance without changing the assigned epistemic certainty."
+        }
+      ]
+    },
+    {
+      "id": "argument_strength",
+      "name": "Substantive argument strength",
+      "definition": "The amount and relevance of substantive support for the policy, excluding the speaker's confidence and interpersonal manner.",
+      "low_anchor": "Little relevant substantive support.",
+      "high_anchor": "Substantial relevant substantive support.",
+      "role": "protected",
+      "hold_constant": "Retain the same substantive supporting points and their scope; do not add evidence, facts, or claims to intensify the assigned perspectives."
+    },
+    {
+      "id": "expected_persuasion",
+      "name": "Expected persuasion",
+      "definition": "A model judge's expectation of how compelling the recommendation might be to employees. This is diagnostic, not a participant outcome.",
+      "low_anchor": "Expected to be unpersuasive to the stated audience.",
+      "high_anchor": "Expected to be persuasive to the stated audience.",
+      "role": "consequence"
+    }
+  ],
+  "candidate_review": [
+    {
+      "construct": {
+        "name": "Interpersonal brashness"
+      },
+      "classification": "factor",
+      "rationale": "For this illustrative factorial design, distinguish confidence in the claims from the interpersonal stance by manipulating both independently.",
+      "dimension_id": "brashness"
+    },
+    {
+      "construct": {
+        "name": "Substantive argument strength"
+      },
+      "classification": "spillover",
+      "rationale": "Adding substantive support would change more than the assigned certainty or interpersonal stance.",
+      "dimension_id": "argument_strength"
+    },
+    {
+      "construct": {
+        "name": "Expected persuasion"
+      },
+      "classification": "consequence",
+      "rationale": "Persuasion is the response of interest and should not be suppressed or used to select messages. Model expectations do not constitute behavioral evidence.",
+      "dimension_id": "expected_persuasion"
+    }
+  ],
+  "blueprints": [
+    {
+      "id": "flexible_work",
+      "context": "Write an internal message from a manager recommending a voluntary two-day-per-week remote-work pilot. The scenario is hypothetical.",
+      "required_content": [
+        "Recommend a voluntary pilot allowing two remote days per week.",
+        "The pilot would let employees reduce commuting on those days.",
+        "Teams would arrange their shared office days to preserve opportunities for in-person coordination.",
+        "Recommend evaluating the pilot before deciding whether to continue it."
+      ]
+    }
+  ],
+  "families_per_context": 5,
+  "seed": 2026,
+  "writing_requirements": [
+    "Use ordinary workplace language."
+  ],
+  "generation": {
+    "min_words": 100,
+    "max_words": 160,
+    "max_word_range": 40,
+    "max_attempts": 3,
+    "writer": {
+      "kind": "codex",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "timeout_seconds": 300
+    },
+    "judges": [
+      {
+        "name": "judge_1",
+        "kind": "codex",
+        "model": "gpt-6.1-sol",
+        "effort": "low",
+        "timeout_seconds": 300
+      },
+      {
+        "name": "judge_2",
+        "kind": "codex",
+        "model": "gpt-6.1-sol",
+        "effort": "low",
+        "timeout_seconds": 300
+      }
+    ]
+  },
+  "assessment": {
+    "scale_min": 1,
+    "scale_max": 7,
+    "min_target_difference": 1.5,
+    "max_spillover": 0.75,
+    "min_content_fidelity": 5,
+    "min_fluency": 5,
+    "naturalness_review_below": 4,
+    "critical_issue_consensus": 1
+  },
+  "researcher_review": {
+    "completed": false,
+    "reviewer": null
+  },
+  "example_notice": "Illustrative definitions, theoretical classifications, and thresholds require researcher review. This is not an empirically validated protocol."
+}

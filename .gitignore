@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.env
+.env.*
+study.json
+*.setup.json
+*.proposal.json
+*.setup-calls/
+runs/
+demo-run/
+.DS_Store
