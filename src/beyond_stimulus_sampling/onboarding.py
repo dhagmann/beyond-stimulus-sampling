@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .providers import ModelProvider
 from .schemas import CONSTRUCT, PROPOSAL, validate
-from .specification import (StudyError, dimension_summary, fingerprint, load_json,
+from .specification import (StudyError, review_details, fingerprint, load_json,
                             slug, utc_now, validate_provider, validate_study, write_json)
 from .workflow import propose
 
@@ -30,7 +30,15 @@ class Questions:
     def ask(self, key: str, prompt: str, default: str | None = None, *, check=None) -> str:
         answers = self.state["answers"]
         if key in answers:
-            return answers[key]
+            value = answers[key]
+            try:
+                if not isinstance(value, str) or not value.strip():
+                    raise ValueError('Expected a nonempty saved answer')
+                if check:
+                    check(value)
+            except (ValueError, StudyError) as exc:
+                raise StudyError(f'Saved setup answer {key} is invalid; correct the checkpoint or start a new setup') from exc
+            return value
         while True:
             value = self.input(prompt + (f" [{default}]" if default is not None else "") + ": ").strip()
             value = value or (str(default) if default is not None else "")
@@ -73,7 +81,10 @@ def levels_for(q: Questions, key: str, construct: dict) -> list[dict]:
     levels = []
     for i in range(count):
         default_id = ("low" if i == 0 else "high") if count == 2 else f"level_{i + 1}"
-        level_id = slug(q.ask(f"{key}_{i}_id", f"Name for level {i + 1} (lowest to highest)", default_id))
+        def check_id(value):
+            if slug(value) in {level['id'] for level in levels}:
+                raise ValueError('Choose a different name for each ordered level')
+        level_id = slug(q.ask(f"{key}_{i}_id", f"Name for level {i + 1} (lowest to highest)", default_id, check=check_id))
         instruction = construct["low_anchor"] if i == 0 else construct["high_anchor"] if i == count - 1 else None
         instruction = q.ask(f"{key}_{i}_instruction", f"Writing instruction for {level_id}", instruction)
         levels.append({"id": level_id, "instruction": instruction})
@@ -127,9 +138,11 @@ def build_study(q: Questions, proposal: dict, provider_config: dict) -> dict:
             focal["facets"].append(construct)
             dimension_id = focal_id
         elif classification != "ignore":
-            dimension_id = slug(construct["name"])
-            if dimension_id in {d["id"] for d in dimensions}:
-                dimension_id += f"_{index + 1}"
+            base = slug(construct['name'])
+            dimension_id, suffix = base, 2
+            while dimension_id in {d['id'] for d in dimensions}:
+                dimension_id = f'{base}_{suffix}'
+                suffix += 1
             role = {"spillover": "protected", "factor": "factor", "consequence": "consequence"}[classification]
             dimension = {"id": dimension_id, **construct, "role": role}
             if role == "factor":
@@ -163,6 +176,12 @@ def build_study(q: Questions, proposal: dict, provider_config: dict) -> dict:
     writing_requirements = [] if requirements.lower() == "none" else [x.strip() for x in requirements.split("|") if x.strip()]
     settings = {"min_words": min_words, "max_words": max_words, "max_word_range": 40,
                 "max_attempts": 3, "writer": copy.deepcopy(provider_config), "judges": []}
+    writers = [{**copy.deepcopy(provider_config), 'name': 'writer_1'}]
+    while q.yes(f'writer_{len(writers) + 1}_add', 'Use an additional writer model across families?'):
+        config = ask_provider(q, f'writer_{len(writers) + 1}')
+        writers.append({**config, 'name': f'writer_{len(writers) + 1}'})
+    if len(writers) > 1:
+        settings['writers'] = writers
     q.output("\nThe default judges are two separate calls to your chosen model. Different model families"
              "\ncan provide a useful cross-check; repeated calls to one model are not independent validation.")
     for number in (1, 2):
@@ -194,7 +213,7 @@ def build_study(q: Questions, proposal: dict, provider_config: dict) -> dict:
                                   "notice": "Definitions and classifications require researcher judgment."},
              "researcher_review": {"completed": False}}
     validate_study(study, reviewed=False)
-    q.output("\n" + dimension_summary(study))
+    q.output("\n" + review_details(study))
     q.output("\nInspect both the construct boundary decisions and the full design before generation."
              "\nModel screening cannot establish discriminant validity or rule out unmeasured spillover.")
     complete = q.yes("complete", "Have you reviewed and accepted this study specification?", True)

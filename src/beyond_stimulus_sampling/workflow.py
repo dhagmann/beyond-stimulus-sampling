@@ -12,7 +12,8 @@ from . import PROTOCOL_VERSION
 from . import gate, prompts, schemas
 from .providers import ModelProvider
 from .sampling import sample_family
-from .specification import StudyError, cells_for, fingerprint, load_json, utc_now, validate_study, write_json
+from .specification import (StudyError, cells_for, fingerprint, load_json, utc_now,
+                            validate_study, write_json, writer_profiles, protect_run_artifact)
 
 
 def protocol_fingerprint() -> str:
@@ -27,15 +28,30 @@ def call_request(config: dict, system: str, prompt: str, schema: dict, sample_id
             "sample_id": sample_id}
 
 
+def _read_call(path: Path) -> dict:
+    try:
+        record = load_json(path)
+        if 'record_sha256' not in record:
+            raise StudyError('Saved call predates the full-record checksum; use its original release or a new cache')
+        body = {k: v for k, v in record.items() if k != 'record_sha256'}
+        if (fingerprint(body) != record['record_sha256'] or fingerprint(record['request']) != path.stem
+                or fingerprint(record['response']) != record['response_sha256']):
+            raise StudyError(f'Changed model-call record: {path.name}')
+        schemas.validate(record['response'], record['request']['schema'])
+        return record
+    except StudyError:
+        raise
+    except (KeyError, TypeError, AttributeError, ValueError) as exc:
+        raise StudyError(f'Malformed saved model-call record: {path.name}') from exc
+
+
 def cached_call(root: Path, provider, system: str, prompt: str, schema: dict,
                 *, sample_id: str = "", validate_response: Callable | None = None) -> tuple[dict, str]:
     request = call_request(provider.config, system, prompt, schema, sample_id)
     key = fingerprint(request)
     path = root / "calls" / f"{key}.json"
     if path.exists():
-        record = load_json(path)
-        if fingerprint(record["request"]) != key or fingerprint(record["response"]) != record["response_sha256"]:
-            raise StudyError("An archived model call has changed")
+        record = _read_call(path)
         schemas.validate(record["response"], schema)
         if validate_response:
             validate_response(record["response"])
@@ -44,18 +60,23 @@ def cached_call(root: Path, provider, system: str, prompt: str, schema: dict,
     schemas.validate(response, schema)
     if validate_response:
         validate_response(response)
-    write_json(path, {"request": request, "response": response,
-                      "response_sha256": fingerprint(response), "receipt": receipt,
-                      "completed_at": utc_now()})
+    record = {"request": request, "response": response,
+              "response_sha256": fingerprint(response), "receipt": receipt,
+              "completed_at": utc_now()}
+    record['record_sha256'] = fingerprint(record)
+    write_json(path, record)
     return response, key
 
 
 def propose(construct: str, context: str, provider, cache_dir: Path) -> dict:
+    def check(response):
+        names = [' '.join(c['name'].casefold().split()) for c in response['candidates']]
+        if len(names) != len(set(names)):
+            raise StudyError('The model proposed duplicate candidate constructs; request a fresh proposal')
+
     response, call = cached_call(cache_dir, provider, prompts.PROPOSER_SYSTEM,
-                                 prompts.proposal_prompt(construct, context), schemas.PROPOSAL)
-    names = [c["name"].casefold().strip() for c in response["candidates"]]
-    if len(names) != len(set(names)):
-        raise StudyError("The model proposed duplicate candidate constructs; request a fresh proposal")
+                                 prompts.proposal_prompt(construct, context), schemas.PROPOSAL,
+                                 validate_response=check)
     return {"schema_version": "1.0", "construct": construct, "context": context,
             "proposal": response, "call_id": call, "created_at": utc_now(),
             "notice": "Model suggestions, not theoretical classifications or validated measures."}
@@ -79,6 +100,15 @@ def normalize_judge(response: dict, mapping: dict[str, str], study: dict, cells:
 def _manifest(study: dict) -> dict:
     families = [sample_family(bp, study['seed'], rep)
                 for bp in study["blueprints"] for rep in range(study["families_per_context"])]
+    if 'writers' in study['generation']:
+        profiles = writer_profiles(study)
+        for bp in study['blueprints']:
+            selected = [f for f in families if f['blueprint']['id'] == bp['id']]
+            for replicate, family in enumerate(selected):
+                block, slot = divmod(replicate, len(profiles))
+                order = list(range(len(profiles)))
+                random.Random(f"{study['seed']}:{bp['id']}:writers:{block}").shuffle(order)
+                family['writer'] = profiles[order[slot]]['name']
     return {"schema_version": "1.0", "protocol": PROTOCOL_VERSION,
             "protocol_sha256": protocol_fingerprint(), "study": study,
             "study_sha256": fingerprint(study), "families": families,
@@ -86,6 +116,8 @@ def _manifest(study: dict) -> dict:
 
 
 def check_manifest(manifest: dict, study: dict | None = None) -> None:
+    if manifest.get('schema_version') != '1.0' or manifest.get('protocol') != PROTOCOL_VERSION:
+        raise StudyError('Saved run uses another protocol; use its matching software release')
     validate_study(manifest["study"])
     if fingerprint(manifest["study"]) != manifest["study_sha256"]:
         raise StudyError("Frozen study settings have changed")
@@ -102,6 +134,24 @@ def _attempt_paths(root: Path, family_id: str) -> list[Path]:
     return sorted((root / "families" / family_id).glob("attempt_*.json"))
 
 
+def family_writer(study: dict, family: dict) -> dict:
+    if 'writers' not in study['generation']:
+        return study['generation']['writer']
+    return next(p for p in writer_profiles(study) if p['name'] == family['writer'])
+
+
+def revision_feedback(previous: dict, cell_id: str) -> list[str]:
+    failures = [f for f in previous['decision']['failures'] if cell_id in f['cells']]
+    feedback = [f['message'] for f in failures]
+    kinds = {f['kind'] for f in failures}
+    for judge, assessment in previous['judges'].items():
+        row = next(r for r in assessment['messages'] if r['id'] == cell_id)
+        for issue in row['issues']:
+            if issue['kind'] in kinds:
+                feedback.append(f"{judge}: {issue['explanation']}\nEvidence from your draft: {issue['quote']}")
+    return feedback
+
+
 def run(study: dict, root: Path, *, provider_factory: Callable = ModelProvider,
         progress: Callable[[str], None] = print) -> dict:
     validate_study(study)
@@ -116,7 +166,7 @@ def run(study: dict, root: Path, *, provider_factory: Callable = ModelProvider,
             raise StudyError("A new run directory must be empty")
         manifest = _manifest(copy.deepcopy(study))
         write_json(manifest_path, manifest)
-    writer = provider_factory(study["generation"]["writer"])
+    writers = {}
     judges = {j["name"]: provider_factory(j) for j in study["generation"]["judges"]}
     for family in manifest["families"]:
         family_id, blueprint = family["id"], family["blueprint"]
@@ -125,6 +175,11 @@ def run(study: dict, root: Path, *, provider_factory: Callable = ModelProvider,
         if previous and previous["decision"]["accepted"]:
             progress(f"{family_id}: already screened; using saved results")
             continue
+        config = family_writer(study, family)
+        key = fingerprint(config)
+        if key not in writers:
+            writers[key] = provider_factory(config)
+        writer = writers[key]
         first_attempt = (previous["attempt"] + 1) if previous else 1
         for number in range(first_attempt, study["generation"]["max_attempts"] + 1):
             progress(f"{family_id}: attempt {number}")
@@ -135,8 +190,7 @@ def run(study: dict, root: Path, *, provider_factory: Callable = ModelProvider,
                 if prior and template["id"] not in revise:
                     cells.append(copy.deepcopy(prior))
                     continue
-                feedback = [f["message"] for f in previous["decision"]["failures"]
-                            if template["id"] in f["cells"]] if previous else []
+                feedback = revision_feedback(previous, template['id']) if previous else []
                 request = prompts.writer_prompt(study, blueprint, template,
                                                 family_id=family_id, prior=prior["text"] if prior else "", feedback=feedback)
                 response, call_id = cached_call(root, writer, prompts.WRITER_SYSTEM, request, schemas.MESSAGE,
@@ -164,11 +218,20 @@ def run(study: dict, root: Path, *, provider_factory: Callable = ModelProvider,
             record["record_sha256"] = fingerprint(record)
             write_json(root / "families" / family_id / f"attempt_{number:03d}.json", record)
             previous = record
+            for flag in decision['review_flags']:
+                concern = flag.get('explanation') or flag.get('comments') or flag.get('mean')
+                progress(f"{family_id}: researcher review [{flag['kind']}]: {concern}")
             if decision["accepted"]:
                 progress(f"{family_id}: model-screened" + ("; human review flagged" if decision["review_flags"] else ""))
                 break
+            for failure in decision['failures']:
+                progress(f"{family_id}: {failure['message']}")
             progress(f"{family_id}: {len(decision['failures'])} issues; revising {len(decision['revise_cells'])} cells")
-    return summarize(root)
+    summary = summarize(root)
+    from .report import render
+    summary['report'] = str(render(root))
+    progress('Audit report: ' + summary['report'])
+    return summary
 
 
 def summarize(root: Path) -> dict:
@@ -186,7 +249,7 @@ def summarize(root: Path) -> dict:
               "missing_families": missing, "rejected_families": [r["family_id"] for r in records if not r["decision"]["accepted"]],
               "screened_messages": sum(len(r["cells"]) for r in accepted),
               "total_attempts": sum(len(_attempt_paths(root, f["id"])) for f in manifest["families"]),
-              "review_flags": sum(len(r["decision"]["review_flags"]) for r in accepted),
+              "review_flags": sum(len(r["decision"]["review_flags"]) for r in records),
               "complete": len(accepted) == len(manifest["families"]),
               "study_sha256": manifest["study_sha256"], "human_validated": False}
     write_json(root / "summary.json", report)
@@ -194,14 +257,20 @@ def summarize(root: Path) -> dict:
 
 
 def validate_run(root: Path) -> dict:
+    try:
+        return _validate_run(Path(root))
+    except StudyError:
+        raise
+    except (KeyError, TypeError, AttributeError, IndexError, ValueError, StopIteration) as exc:
+        raise StudyError('Malformed saved run or model-call record; restore the archive before resuming') from exc
+
+
+def _validate_run(root: Path) -> dict:
     manifest = load_json(root / "manifest.json")
     check_manifest(manifest)
     calls = {}
     for path in (root / "calls").glob("*.json"):
-        record = load_json(path)
-        if fingerprint(record["request"]) != path.stem or fingerprint(record["response"]) != record["response_sha256"]:
-            raise StudyError(f"Changed model-call record: {path.name}")
-        schemas.validate(record["response"], record["request"]["schema"])
+        record = _read_call(path)
         calls[path.stem] = record
     checked = 0
     study = manifest["study"]
@@ -216,6 +285,8 @@ def validate_run(root: Path) -> dict:
                 raise StudyError(f"Changed family record: {family['id']}")
             if number > study["generation"]["max_attempts"] or (previous and previous["decision"]["accepted"]):
                 raise StudyError("Unexpected attempt after screening or after the attempt limit")
+            if [{'id': c['id'], 'levels': c['levels']} for c in record['cells']] != cells_for(study):
+                raise StudyError('Saved family differs from the complete ordered experimental design')
             for cell in record["cells"]:
                 call = calls.get(cell["writer_call"])
                 if not call or call["response"].get("text") != cell["text"] or fingerprint(cell["text"]) != cell["text_sha256"]:
@@ -225,10 +296,10 @@ def validate_run(root: Path) -> dict:
                     if cell != prior:
                         raise StudyError("An unaffected cell changed during targeted revision")
                     continue
-                feedback = [f["message"] for f in previous["decision"]["failures"] if cell["id"] in f["cells"]] if previous else []
+                feedback = revision_feedback(previous, cell['id']) if previous else []
                 prompt = prompts.writer_prompt(study, family["blueprint"], cell, family_id=family["id"],
                                                prior=prior["text"] if prior else "", feedback=feedback)
-                expected = call_request(study["generation"]["writer"], prompts.WRITER_SYSTEM, prompt,
+                expected = call_request(family_writer(study, family), prompts.WRITER_SYSTEM, prompt,
                                         schemas.MESSAGE, f"writer:{family['id']}:{cell['id']}:{number}")
                 if call["request"] != expected:
                     raise StudyError("Writer request differs from its frozen study and revision history")
@@ -264,6 +335,7 @@ def validate_run(root: Path) -> dict:
 
 
 def export_messages(root: Path, output: Path, *, allow_partial: bool = False) -> list[dict]:
+    protect_run_artifact(Path(root), Path(output))
     summary = validate_run(root)
     if not summary["complete"] and not allow_partial:
         raise StudyError("The corpus is incomplete; inspect the report or explicitly use --allow-partial")
@@ -277,9 +349,11 @@ def export_messages(root: Path, output: Path, *, allow_partial: bool = False) ->
         if not record["decision"]["accepted"]:
             continue
         for cell in record["cells"]:
+            writer = family_writer(manifest['study'], family)
             rows.append({"id": f"{family['id']}__{cell['id']}", "family_id": family["id"],
                          "levels": cell["levels"], "text": cell["text"], "text_sha256": cell["text_sha256"],
                          "screening_status": "model_screened", "human_validated": False,
-                         "review_flags": record["decision"]["review_flags"]})
+                         "review_flags": record["decision"]["review_flags"],
+                         'writer': {k: writer[k] for k in ('kind', 'model', 'name') if k in writer}})
     write_json(output, rows)
     return rows

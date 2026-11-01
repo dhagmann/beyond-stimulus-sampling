@@ -61,9 +61,9 @@ def evaluate(study: dict, cells: list[dict], judges: dict[str, dict]) -> dict:
         issue_judges: dict[str, list[str]] = {}
         for judge, rows in ratings.items():
             for issue in rows[cell_id]["issues"]:
-                if issue["kind"] == "unnatural":
-                    review.append({"kind": "naturalness_evidence", "cells": [cell_id],
-                                   "judge": judge, **issue})
+                if issue["kind"] in {"unnatural", "unexpected_construct"}:
+                    kind = 'naturalness_evidence' if issue['kind'] == 'unnatural' else 'unexpected_construct'
+                    review.append({**issue, "kind": kind, "cells": [cell_id], "judge": judge})
                 else:
                     issue_judges.setdefault(issue["kind"], [])
                     if judge not in issue_judges[issue["kind"]]:

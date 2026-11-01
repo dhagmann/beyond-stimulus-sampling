@@ -4,7 +4,7 @@ A guided harness for constructing experimental messages and auditing **construct
 
 Stimulus sampling addresses variation across messages. It does not establish that those messages isolate the intended construct. This package helps researchers define the construct boundary, generate multiple message families, examine changes in other attributes, and revise the messages against a recorded study specification. It is reusable research infrastructure: the constructs, contexts, treatment levels, and screening rules live in a study file rather than in the generation code.
 
-This is a private research prototype by David Hagmann and Zachary Wojtowicz. Model screening supports stimulus development; human validation remains necessary.
+This research prototype is by David Hagmann and Zachary Wojtowicz. Model screening supports stimulus development. Human validation remains necessary.
 
 The package accompanies [*Beyond Stimulus Sampling: A Harness for Designing and Auditing Experimental Stimuli*](manuscript/beyond_stimulus_sampling.pdf). The [blinded review copy](manuscript/beyond_stimulus_sampling_blinded.pdf), editable Quarto sources, references, figure assets, and minimal analysis data are included. See the [manuscript reproduction instructions](manuscript/README.md).
 
@@ -35,6 +35,8 @@ The wizard first asks **what construct you want to manipulate** and **in what co
 
 You can edit the suggestions and add constructs the model missed. You then specify the scenarios, shared substantive content, number of families, length, providers, and assessment criteria. The wizard records your rationale for each classification and saves answers after every step. To continue an interrupted setup, repeat the command with `--resume`.
 
+The wizard also lets you choose additional writer models and different models for the judges. Writer models are assigned across families in seeded, balanced blocks within each context. All conditions and revisions within a family use the same writer model, so a model change is not tied to a treatment. Before generation, the review screen shows the actual definitions, anchors, level instructions, shared material, pools, models, and numerical criteria.
+
 ## Generate and inspect messages
 
 ```sh
@@ -47,11 +49,21 @@ bss validate runs/pilot
 bss export runs/pilot --output runs/pilot/messages.json
 ```
 
-Open `runs/pilot/report.html` to inspect the messages, individual judge ratings, target contrasts, spillover contrasts, failures, and revision history. Each family contains every combination of factor levels for one shared scenario. Multiple independently generated families provide stimulus sampling within each scenario; additional scenarios broaden the intended stimulus population.
+The run automatically creates `runs/pilot/report.html` and a compact audit for each assessed family. Open the full report to inspect the messages, individual judge ratings, target contrasts, spillover contrasts, failures, and revision history. The compact audits place construct roles, judge ratings, differences, cutoffs, and review flags together for inspection and printing. Small designs can fit on one page. Larger designs or extensive concerns may need more space.
+
+To regenerate a particular family audit, use its ID from the full report or manifest:
+
+```sh
+bss audit runs/pilot --family context_1__r001
+```
+
+Each family contains every combination of factor levels for one shared scenario. Multiple independently generated families provide stimulus sampling within each scenario. Additional scenarios broaden the intended stimulus population.
 
 `bss plan` proposes a pool of substantive points and a pool of organizational styles from the source material supplied for each context. It saves those suggestions for researcher review; it does not verify their factual accuracy. The researcher can edit them before accepting the planned study. For each family, the engine samples points without replacement and selects a style, then supplies the same draw to every treatment cell. New draws across families introduce variation in content and organization. The frozen manifest records each draw, and revisions keep that draw fixed. A study without pools uses the original shared blueprint for every family. See the [pool and sampling specification](docs/sampling.md).
 
-Writers receive separate requests for each cell. Judges see the complete family in a shuffled order, with neutral message IDs and no condition assignments. Failed cells are revised; the whole family is evaluated again. Running the same command resumes from saved calls and completed attempts, using the same frozen study and code. Changing the design requires a new run directory.
+Writers receive separate requests for each cell. Judges see the complete family in a shuffled order, with neutral message IDs and no condition assignments, dimension roles, or other judges' ratings. When a check fails, the affected writers receive their own drafts and relevant feedback, including the judge's exact quotations and explanations for material concerns. The whole family is evaluated again. Judges can also flag unexpected attributes for researcher judgment. Those flags do not silently add a new construct or suppression instruction to the study.
+
+Running the same command resumes from saved calls and completed attempts, using the same frozen study and code. Changing the design requires a new run directory. The seed determines the sampled inputs, writer assignment, and blinded order. It does not make hosted model outputs reproducible. Recorded inputs and decisions allow offline replay and support conceptual replication with other researchers and models.
 
 Acceptance means **model-screened**, not human-validated. The export preserves that distinction and includes any outstanding human-review flags. Incomplete corpora require an explicit `--allow-partial` export. The model judges' evaluations of consequences are not participant outcomes.
 
@@ -100,4 +112,4 @@ The tests and GitHub checks use synthetic fixtures and make no model calls. Run 
 
 The manuscript's approved reproduction data contain only treatment labels, derived belief changes, one certainty rating, and sample counts. Prolific IDs, response IDs, IP addresses, locations, timestamps, demographics, comments, and raw survey exports are excluded. Run `python scripts/check_manuscript_data.py` to check the exact allowlist. The study illustrations use earlier study-specific workflows; compiling the paper reproduces their reported analyses from the included data and does not regenerate their messages.
 
-Licensing and a public release will be decided separately. No open-source license has been assigned to this private prototype.
+This repository is public for inspection and evaluation. No open-source license has been assigned.

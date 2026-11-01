@@ -189,7 +189,7 @@ class OnboardingTests(unittest.TestCase):
             responses = iter(["no", "2", "", "", "", "", "no", "1", "Explicitness is a facet in this question",
                               "no", "2", "Warmth should be separate", "", "no", "4", "Trust may be a consequence", "no",
                               "", "Preserve the decision | Preserve the stated timing", "no", "1", "10", "50", "none",
-                              "no", "no", "no", "", "yes", "Test researcher"])
+                              "no", "no", "no", "no", "", "yes", "Test researcher"])
             def no_model(config):
                 raise AssertionError("Saved proposal should avoid model calls")
             output = folder / "study.json"
@@ -220,6 +220,11 @@ class OnboardingTests(unittest.TestCase):
             answers.update({"candidate_2_levels_count": "2", "candidate_2_levels_0_id": "low", "candidate_2_levels_1_id": "high",
                             "candidate_2_levels_0_instruction": "low", "candidate_2_levels_1_instruction": "high",
                             "candidate_1_hold": "Hold comparable"})
+            provider_path = Path(temp) / 'second-provider.json'
+            write_json(provider_path, {**study()['generation']['writer'], 'model': 'second-synthetic-writer'})
+            answers.update({'writer_2_add': 'yes', 'writer_2_kind': 'command',
+                            'writer_2_model': 'second-synthetic-writer', 'writer_2_config': str(provider_path),
+                            'writer_3_add': 'no'})
             q.state["answers"] = answers
             spec = build_study(q, proposal, study()["generation"]["writer"])
             validate_study(spec)
@@ -227,6 +232,8 @@ class OnboardingTests(unittest.TestCase):
             self.assertEqual(spec["dimensions"][0]["facets"][0]["name"], "candidate_0")
             self.assertEqual(len(cells_for(spec)), 4)
             self.assertEqual(len(spec["candidate_review"]), 5)
+            self.assertEqual(len(spec['generation']['writers']), 2)
+            self.assertEqual(spec['generation']['writers'][1]['model'], 'second-synthetic-writer')
             self.assertNotIn("candidate_3", prompts.writer_prompt(spec, spec["blueprints"][0], cells_for(spec)[0]))
 
     def test_interrupted_init_preserves_answers(self):

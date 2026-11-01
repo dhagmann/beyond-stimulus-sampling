@@ -22,7 +22,8 @@ PROPOSAL = obj({
                                  "example_change": TEXT})},
 })
 MESSAGE = obj({"text": TEXT})
-ISSUE_KINDS = ["content_changed", "required_content_missing", "instruction_leakage", "incoherent", "unnatural"]
+ISSUE_KINDS = ["content_changed", "required_content_missing", "instruction_leakage",
+               "incoherent", "organization_changed", "unnatural", "unexpected_construct"]
 
 
 def pool_schema(content_count: int, style_count: int) -> dict:

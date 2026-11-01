@@ -10,8 +10,8 @@ from pathlib import Path
 from . import __version__
 from .onboarding import DEFAULT_MODELS, initialize
 from .providers import ModelProvider, ProviderError
-from .report import render
-from .specification import (StudyError, dimension_summary, load_json, utc_now,
+from .report import render, audit
+from .specification import (StudyError, review_details, load_json, utc_now, writer_profiles,
                             validate_study, write_json)
 from .workflow import export_messages, propose, run, validate_run
 from .sampling import plan
@@ -73,6 +73,10 @@ def parser():
             command.add_argument("--allow-partial", action="store_true")
     demo = commands.add_parser("demo", help="run the labelled synthetic example without model access")
     demo.add_argument("--output", type=Path, default=Path("demo-run"))
+    compact = commands.add_parser('audit', help='write a compact printable audit for one family')
+    compact.add_argument('run', type=Path)
+    compact.add_argument('--family', required=True)
+    compact.add_argument('--output', type=Path)
     return p
 
 
@@ -94,7 +98,7 @@ def main(argv=None) -> int:
                 raise StudyError('The planned study file already exists; choose another output')
             source = load_json(args.study)
             validate_study(source)
-            config = provider_config(args, optional=True) or source['generation']['writer']
+            config = provider_config(args, optional=True) or source['generation'].get('writer') or writer_profiles(source)[0]
             planned = plan(source, ModelProvider(config),
                            args.output.parent / (args.output.stem + '.pool-calls'),
                            content_count=args.content_pool_size,
@@ -106,15 +110,11 @@ def main(argv=None) -> int:
         elif args.action == "review":
             study = load_json(args.study)
             validate_study(study, reviewed=False)
-            print(dimension_summary(study))
+            print(review_details(study))
             print("\nConstruct decisions:")
             for d in study.get("candidate_review", []):
                 print(f"  {d['construct']['name']}: {d['classification']} — {d['rationale']}")
             print("\nAssessment criteria:\n" + json.dumps(study["assessment"], indent=2))
-            for blueprint in study['blueprints']:
-                if 'sampling' in blueprint:
-                    print(f"\nContent and style pools for {blueprint['id']}:\n" +
-                          json.dumps(blueprint['sampling'], indent=2, ensure_ascii=False))
             if args.complete:
                 if input("Accept this study specification for generation? (yes/no): ").strip().lower() == "yes":
                     reviewer = input("Researcher/reviewer name: ").strip()
@@ -131,6 +131,8 @@ def main(argv=None) -> int:
             print(json.dumps(validate_run(args.run), indent=2))
         elif args.action == "report":
             print(render(args.run, args.output))
+        elif args.action == 'audit':
+            print(audit(args.run, args.family, args.output))
         elif args.action == "export":
             rows = export_messages(args.run, args.output, allow_partial=args.allow_partial)
             print(f"Exported {len(rows)} model-screened messages to {args.output}; human validation remains necessary.")

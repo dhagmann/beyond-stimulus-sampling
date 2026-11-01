@@ -43,7 +43,13 @@ writing is plausible in this context; an unusual combination of attributes is no
 itself a prose defect. For every issue, copy a brief exact quotation from the
 message being assessed and explain the problem. Use 'unnatural' for diagnostic
 naturalness concerns and the other issue categories for material content or prose
-failures. Rate content equivalence across the entire set. Return only the JSON."""
+failures. If a relevant attribute outside the supplied dimensions appears to
+change, use 'unexpected_construct' and explain the concern for researcher
+judgment. Do not decide whether it belongs to the intended construct or should
+be suppressed. When a shared argumentation style is supplied, check its broad
+organization, without requiring identical wording or interpersonal manner.
+Flag material departures as 'organization_changed'. Rate content equivalence
+across the entire set. Return only the JSON."""
 
 
 def proposal_prompt(construct: str, context: str) -> str:
@@ -94,11 +100,14 @@ def writer_prompt(study: dict, blueprint: dict, cell: dict, *, family_id: str = 
 
 
 def judge_prompt(study: dict, blueprint: dict, blinded_messages: list[dict]) -> str:
-    return json.dumps({
+    request = {
         "context": blueprint["context"], "required_content": blueprint["required_content"],
         "rating_scale": {"minimum": study["assessment"]["scale_min"], "maximum": study["assessment"]["scale_max"]},
         "dimensions": [{k: d.get(k, []) if k == "facets" else d[k]
                         for k in ("id", "name", "definition", "low_anchor", "high_anchor", "facets")}
                        for d in study["dimensions"]],
         "messages": blinded_messages,
-    }, ensure_ascii=False)
+    }
+    if blueprint.get('argumentation_style'):
+        request['shared_argumentation_style'] = blueprint['argumentation_style']
+    return json.dumps(request, ensure_ascii=False)

@@ -20,19 +20,25 @@ For variation in content and organization, use `bss plan` to propose pools befor
 
 Writers receive each assigned perspective in a separate call, without other conditions' drafts. The same blueprint does not imply a word-for-word template. The content and style checks instead assess whether the resulting family preserves the intended shared material.
 
+The wizard can configure more than one writer model. The harness assigns these models across families in balanced, seeded blocks within each context, and keeps the writer model fixed across all conditions and revisions within a family. Each judge also has its own model configuration and receives a separate context without other judges' ratings. Changing providers does not require changes to the engine.
+
 ## 3. Choose screening rules before the final run
 
 All measured dimensions use the study's numerical rating scale and construct-specific anchors. For a target contrast, the mean signed difference across judges must meet the minimum difference, with no judge assigning a reversed ordering. With more than two ordered levels, the minimum is multiplied by the number of steps between the compared levels. Every pair is checked at fixed levels of the other factors.
 
 For each off-target dimension, the harness takes the absolute difference within each judge and then averages those values. Taking absolute values before averaging prevents opposing judge assessments from cancelling out. This check covers protected attributes and unintended changes in other manipulated factors. Consequence dimensions are reported without a gate.
 
-Content fidelity, fluency, word limits, and the allowed word-count spread have separate checks. Judges can flag material content or coherence problems using exact quotations from the corresponding message. The default rejects a critical issue raised by any judge; the consensus requirement is configurable. Naturalness concerns trigger human-review flags rather than automatic rejection. An uncommon combination of attributes should not fail merely because it is uncommon.
+Content fidelity, fluency, word limits, and the allowed word-count spread have separate checks. Judges can flag material content, organization, or coherence problems using exact quotations from the corresponding message. The default rejects a critical issue raised by any judge. The consensus requirement is configurable. Naturalness concerns trigger human-review flags rather than automatic rejection. An uncommon combination of attributes should not fail merely because it is uncommon.
+
+Judges may identify an attribute missing from the specification and flag it as `unexpected_construct`. The console and reports surface the concern for researcher judgment. It does not automatically reject the family or become a writer objective. If the concern warrants changing the construct boundary or criteria, review the specification and start a new run, preserving the earlier record.
 
 The numerical defaults are provisional. A rating difference below a chosen threshold is a descriptive model-screening result, not an equivalence test or proof of no confounding. Calibrate ratings and bounds against human judgments in your setting. Choose the rules before producing the final corpus; retain the full revision history. The software does not perform statistical inference, fit persuasion models, or adjust participant analyses.
 
 ## 4. Inspect the process and validate with people
 
 Use the HTML report to read the messages alongside the ratings and contrasts. Inspect rejected attempts as well as accepted ones: repeated failure to separate two constructs may reveal a conceptual boundary problem or a limitation of the generator and judges. The harness stops after the configured number of attempts and reports an incomplete corpus rather than silently dropping the planned families.
+
+Each completed run writes a full report and compact family audits. Use `bss audit RUN --family ID` to regenerate one audit. The compact version displays construct roles, individual judge ratings, intended contrasts, the largest mean absolute spillover for each rated off-target attribute, and the chosen cutoffs. It links to the full messages and revision history. Small designs can fit one printed page. Larger families, additional dimensions, and detailed concerns may extend it.
 
 Different models can supply a useful cross-check, but model calls are not independent human raters. Judges may share blind spots with writers or each other. A protected-attribute audit covers only what was included in the specification. Review messages for omitted attributes, and use human pretests to assess the manipulation, spillover, plausibility, and fit to the intended population. Avoid selecting messages on the participant outcome you later want to estimate.
 

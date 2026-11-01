@@ -66,4 +66,4 @@ See [data/README.md](data/README.md) for variable definitions, sample selection,
 
 The figure assets and example audit PDFs are included, so rendering needs no model account, raw survey export, or external research directory. `figures/harness_workflow.py` optionally redraws the workflow diagram with Matplotlib. The example audit is a frozen illustration containing archived LLM ratings; compiling the paper does not rerate it. Its warmth, competence, and trust scores are separate, descriptive GPT-6.1-Sol assessments and were not used to change the original screening decisions.
 
-The repository remains private. Including it here does not make the participant-level research exports or model execution logs public.
+The repository is public. It includes only the reduced analysis data described above. Raw participant-level exports and private model execution logs are excluded.
