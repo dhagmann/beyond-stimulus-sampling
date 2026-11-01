@@ -45,102 +45,109 @@ execute:
   warning: false
 ---
 
-# 1. Specify the construct boundary
+# 1. Defining the construct and its spillovers
 
-The researcher begins with the construct, speaker, audience, and setting. The
-harness proposes a definition, rating anchors, and related attributes. The
-researcher edits these suggestions and classifies each attribute as a facet of
-the focal construct, a separate experimental factor, a protected attribute,
-an expected consequence, or outside scope. Facets enter the focal definition;
-factors receive their own treatment levels; protected attributes are screened
-for spillover. Consequences are rated diagnostically and excluded from writer
-objectives and acceptance decisions. This prevents selecting messages to
-eliminate the response the experiment seeks to explain. Definitions, decisions,
-and rationales are saved in the study specification.
+Researchers first specify the construct and the context in which they want to
+manipulate it. The harness proposes a definition, rating anchors, and related
+attributes for review. The researcher decides whether each attribute belongs
+to the focal construct, should be manipulated separately, should be protected
+against spillover, is an expected consequence, or falls outside the study.
+These decisions determine the writing instructions and screening criteria.
+Expected consequences are rated separately and do not enter writer instructions
+or acceptance decisions. This allows the experiment to test effects on those
+outcomes without selecting messages to suppress them. The specification records
+each decision and its rationale.
 
-# 2. Sample inputs, then construct families
+# 2. Generating stimulus families
 
-For each context, the researcher supplies the substantive material. The harness
-proposes pools of arguments and organizational styles, such as opening with an
-example. Researchers review both pools before generation. Each family receives
-a random sample of arguments without replacement and one style. These inputs
-are shared across every combination of treatment levels; later families receive
-new draws. Required content remains fixed in addition to the sampled arguments.
-The seed controls these draws and the order of messages shown to judges, while
-the manifest records the realized samples. Revisions use the original draw.
-Sampling allows repeated combinations and does not make a convenience set of
-contexts representative.
+The harness then builds pools of arguments and argumentation styles from
+material supplied by the researcher. A style describes how an argument is
+organized, such as starting with an example. After the researcher reviews the
+pools, the harness samples arguments without replacement and selects a style
+for each family. All messages in that family use those inputs and the same
+required content. Drawing again for the next family introduces variation across
+families without tying the arguments or style to a treatment. The seed determines
+these draws and the order used for judge assessment. The samples are saved and
+kept fixed during revisions. A finite pool permits repeated combinations and
+does not make the selected contexts representative.
 
 ```{=latex}
 \clearpage
 ```
 
-# 3. Generate and assess in separate contexts
+# 3. Writing and judging the messages
 
-Each writer call receives the shared inputs, its assigned treatment, and
-instructions to express that perspective throughout the message. It does not
-receive other conditions' drafts. Each judge receives the complete family with
-shuffled neutral IDs, shared substantive content, construct definitions, and
-rating anchors. Treatment labels, dimension roles, and other judges' ratings
-are hidden. Separate contexts reduce copying and anchoring. Writer and judge
-providers are configured separately, allowing assessment across models. Judges
-rate constructs, content fidelity, fluency, naturalness, and family-level
-content equivalence. They also flag concerns with exact quotations, which the
-harness checks against the corresponding message.
+With these inputs fixed, a separate writer call generates each message in its
+assigned condition. Writers are instructed to express that perspective
+throughout the message and do not see other conditions' drafts. The harness then
+sends the complete family to each judge in a shuffled order with neutral IDs.
+Judges receive the required content, construct definitions, and rating anchors,
+with treatment labels, dimension roles, and other judges' ratings hidden. These
+separate contexts reduce copying and anchoring. Judges rate the constructs,
+content fidelity, fluency, naturalness, and content equivalence across the family.
+They flag concerns with quotations that the harness checks against the
+corresponding message. Researchers can choose different models for writing and
+judging.
 
-# 4. Apply prespecified criteria
+# 4. Evaluating intended contrasts and spillover
 
-For a pair differing only in the assigned level of factor $f$, let $d_{jk}$ be
+The harness evaluates these ratings against criteria chosen before generation.
+For a pair differing only in its assigned level of factor $f$, let $d_{jk}$ be
 judge $j$'s high-minus-low rating difference on dimension $k$. With $J$ judges,
-the focal contrast must
-satisfy $J^{-1}\sum_j d_{jf}\geq\tau$, with no judge reversing its direction.
-The minimum increases proportionally with the distance between ordered levels.
-For every off-target factor or protected attribute, spillover must satisfy
-$J^{-1}\sum_j |d_{jk}|\leq\epsilon$; opposing judgments therefore cannot cancel.
-Consequence differences do not determine acceptance.
+the focal contrast must satisfy $J^{-1}\sum_j d_{jf}\geq\tau$. No judge can
+reverse its direction. For factors with more than two ordered levels, the
+minimum increases with the distance between levels. For every other factor or
+protected attribute, spillover must satisfy
+$J^{-1}\sum_j |d_{jk}|\leq\epsilon$. Taking the absolute difference within each
+judge prevents opposing judgments from cancelling. Differences in expected
+consequences do not determine acceptance.
 
-Starting values on a 1–7 scale are $\tau=1.5$, $\epsilon=0.75$, and minimum
-mean content fidelity, fluency, and family content equivalence of 5. Naturalness
-below 4 prompts review rather than rejection. Word limits and allowable length
-spread are specified separately. A material issue flagged by one judge causes
-revision by default; this consensus rule is configurable. These values are
-editable starting criteria, not validated equivalence bounds.
+The starting values on a 1–7 scale are $\tau=1.5$ and $\epsilon=0.75$, with
+minimum mean ratings of 5 for content fidelity, fluency, and content equivalence.
+Naturalness below 4 prompts review. Researchers also specify word limits and
+the allowable difference in length across messages. By default, a material
+concern raised by one judge triggers revision, though researchers can change
+this rule. These criteria are starting values that require review and calibration
+for the intended application. They do not establish statistical equivalence
+between conditions.
 
 ```{=latex}
 \clearpage
 ```
 
-# 5. Revise and preserve the audit
+# 5. Revising messages and recording decisions
 
-The coordinating process revises cells implicated in a failed check: one
-message for a local problem, both messages for a failed contrast, or the whole
-family for a family-level failure. Writers receive their own draft and targeted
-feedback. All judges then reassess the complete family. The default allows
-three attempts; an exhausted family remains explicitly incomplete. Export
-requires a complete corpus unless partial export is requested. The saved record
-contains the specification, sampled inputs, prompts, drafts, blinded mappings,
-ratings, concerns, and decisions, including rejected attempts. Hashes check
-internal consistency; they do not authenticate an archive's origin.
+When a check fails, the coordinating agent requests revisions from the writers
+responsible for the affected messages. A problem with one message calls for a
+local revision, while a failed contrast requires revising both messages in the
+pair. A problem with the family as a whole requires revising the full set.
+Each writer receives its own draft and feedback, and all judges then reassess
+the complete family. The default allows three attempts. Families that still
+fail are recorded as incomplete and excluded from export unless the researcher
+requests a partial corpus. Accepted and rejected attempts are saved with the
+inputs, prompts, drafts, blinded mappings, ratings, and decisions. Hashes allow
+others to check the consistency of these records, though they cannot establish
+who created the archive.
 
-# 6. Reproduce and evaluate the procedure
+# 6. Reproducing the workflow
 
-The repository README documents setup, generation, reporting, and export.
-The command `bss validate` reconstructs saved requests and screening decisions
-without model calls. Archive the matching software version with each run.
-Regenerating through a hosted model may yield different text or ratings, and
-models change over time. The documented workflow supports conceptual
-replication; model screening still requires human pretesting and review for
-omitted spillovers.
+Other researchers can use `bss validate` to reconstruct the saved requests and
+screening decisions without making new model calls. This requires the software
+version used for the original run. Following the same process can produce
+different messages or ratings even with the same model, and models change over
+time. The documented workflow supports conceptual replication by allowing other
+researchers and models to follow the same procedure. Human
+pretesting is still needed to assess the intended contrasts and identify
+spillovers the model judges may have missed.
 
-Appendices A and B reproduce the messages discussed in the manuscript.
-Appendix C illustrates an archived audit with its own printed cutoffs; its
-cross-axis column reports the absolute mean judge difference. The reusable
-engine uses the mean absolute difference defined above. The additional warmth,
-competence, and trust scores were obtained separately for illustration and did
-not change the original acceptance decisions. The repository's reduced data
-reproduce the manuscript analyses without participant identifiers or raw survey
-exports. The offline demonstration uses explicitly synthetic messages and
-ratings.
+Appendices A and B provide the full messages discussed in the manuscript.
+Appendix C shows an archived audit with its own printed cutoffs. It reports
+spillover as the absolute mean difference across judges. The reusable engine
+uses the mean absolute difference defined above. The warmth, competence, and
+trust ratings were added separately and did not affect the original acceptance
+decisions. The repository provides reduced data to reproduce the manuscript
+analyses and a demonstration with synthetic messages and ratings. The README
+explains how to run both.
 
 <!-- BEGIN SUPPORTING MATERIALS: regenerated by build_technical_supplement.py -->
 
