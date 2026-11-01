@@ -6,6 +6,10 @@ Stimulus sampling addresses variation across messages. It does not establish tha
 
 This is a private research prototype by David Hagmann and Zachary Wojtowicz. Model screening supports stimulus development; human validation remains necessary.
 
+The package accompanies [*Beyond Stimulus Sampling: A Harness for Designing and Auditing Experimental Stimuli*](manuscript/beyond_stimulus_sampling.pdf). The [blinded review copy](manuscript/beyond_stimulus_sampling_blinded.pdf), editable Quarto sources, references, figure assets, and minimal analysis data are included. See the [manuscript reproduction instructions](manuscript/README.md).
+
+![The researcher, coordinating process, and separate writer and judge contexts](manuscript/figures/harness_workflow.svg)
+
 ## Start with your research question
 
 Requires Python 3.10 or later. The package has no runtime Python dependencies. For live generation, install and authenticate a supported model CLI, or connect a provider through the [command adapter](docs/providers.md).
@@ -32,14 +36,18 @@ You can edit the suggestions and add constructs the model missed. You then speci
 ## Generate and inspect messages
 
 ```sh
-bss review study.json
-bss run study.json --output runs/pilot
+bss plan study.json --output study-planned.json \
+  --content-pool-size 15 --content-per-family 5 --style-pool-size 8
+bss review study-planned.json --complete
+bss run study-planned.json --output runs/pilot
 bss report runs/pilot
 bss validate runs/pilot
 bss export runs/pilot --output runs/pilot/messages.json
 ```
 
 Open `runs/pilot/report.html` to inspect the messages, individual judge ratings, target contrasts, spillover contrasts, failures, and revision history. Each family contains every combination of factor levels for one shared scenario. Multiple independently generated families provide stimulus sampling within each scenario; additional scenarios broaden the intended stimulus population.
+
+`bss plan` proposes a pool of substantive points and a pool of organizational styles from the source material supplied for each context. It saves those suggestions for researcher review; it does not verify their factual accuracy. The researcher can edit them before accepting the planned study. For each family, the engine samples points without replacement and selects a style, then supplies the same draw to every treatment cell. New draws across families introduce variation in content and organization. The frozen manifest records each draw, and revisions keep that draw fixed. A study without pools uses the original shared blueprint for every family. See the [pool and sampling specification](docs/sampling.md).
 
 Writers receive separate requests for each cell. Judges see the complete family in a shuffled order, with neutral message IDs and no condition assignments. Failed cells are revised; the whole family is evaluated again. Running the same command resumes from saved calls and completed attempts, using the same frozen study and code. Changing the design requires a new run directory.
 
@@ -56,7 +64,11 @@ This **synthetic software demonstration** uses fixed workplace messages and inve
 
 ## Adapt it to another study
 
-Run `bss init` again with a different construct and context. You can also inspect the [certainty–brashness example](examples/certainty-brashness.json), which illustrates two independently manipulated dimensions, or the [organizational transparency example](examples/organizational-transparency.json). Examples require researcher review before generation:
+Run `bss init` again with a different construct and context. You can also inspect the [certainty–brashness example](examples/certainty-brashness.json), which illustrates two independently manipulated dimensions, or the [organizational transparency example](examples/organizational-transparency.json).
+
+The [pooled certainty–brashness example](examples/certainty-brashness-pooled.json) also includes hand-written content and style pools for a hypothetical remote-work pilot. It illustrates the sampling format without requiring an initial planning call. The entries still need researcher review.
+
+Examples require researcher review before generation:
 
 ```sh
 bss review examples/organizational-transparency.json --complete
@@ -82,6 +94,8 @@ See the [researcher guide](docs/researcher-guide.md), [study specification](docs
 python -m unittest discover -s tests -v
 ```
 
-The tests and GitHub checks use synthetic fixtures and make no model calls. Run folders, local study specifications, and environment files are ignored by Git. Keep credentials in the provider's login store or environment, rather than in study files or adapter arguments. This repository contains the software and illustrative examples; research data should be shared through a deliberately prepared release.
+The tests and GitHub checks use synthetic fixtures and make no model calls. Run folders, local study specifications, and environment files are ignored by Git. Keep credentials in the provider's login store or environment, rather than in study files or adapter arguments. This repository contains the software, illustrative examples, and the approved minimal manuscript data.
+
+The manuscript's approved reproduction data contain only treatment labels, derived belief changes, one certainty rating, and sample counts. Prolific IDs, response IDs, IP addresses, locations, timestamps, demographics, comments, and raw survey exports are excluded. Run `python scripts/check_manuscript_data.py` to check the exact allowlist. The study illustrations use earlier study-specific workflows; compiling the paper reproduces their reported analyses from the included data and does not regenerate their messages.
 
 Licensing and a public release will be decided separately. No open-source license has been assigned to this private prototype.

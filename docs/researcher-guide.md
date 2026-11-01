@@ -16,6 +16,8 @@ Specify one or more scenario blueprints. Each blueprint contains the context and
 
 A family contains every combination of the factors' ordered levels for one blueprint. Generating several families gives multiple realizations of that blueprint; adding blueprints supplies variation in substantive context. Choose contexts to represent the population to which you want to generalize. The harness does not make a convenience set of topics representative.
 
+For variation in content and organization, use `bss plan` to propose pools before running the study. Review and edit the resulting points and styles, then record approval with `bss review --complete`. For each family the engine draws points and a style once and shares those inputs across conditions. Revisions use the original draw. This allows content and style to vary between families while being yoked within a family. The [sampling guide](sampling.md) describes the saved plan and its limitations.
+
 Writers receive each assigned perspective in a separate call, without other conditions' drafts. The same blueprint does not imply a word-for-word template. The content and style checks instead assess whether the resulting family preserves the intended shared material.
 
 ## 3. Choose screening rules before the final run

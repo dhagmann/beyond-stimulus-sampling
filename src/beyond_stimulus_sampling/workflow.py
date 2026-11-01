@@ -11,12 +11,13 @@ from typing import Callable
 from . import PROTOCOL_VERSION
 from . import gate, prompts, schemas
 from .providers import ModelProvider
+from .sampling import sample_family
 from .specification import StudyError, cells_for, fingerprint, load_json, utc_now, validate_study, write_json
 
 
 def protocol_fingerprint() -> str:
     here = Path(__file__).parent
-    names = ("prompts.py", "schemas.py", "specification.py", "gate.py", "providers.py", "workflow.py")
+    names = ("prompts.py", "schemas.py", "specification.py", "gate.py", "providers.py", "workflow.py", "sampling.py")
     return fingerprint({"version": PROTOCOL_VERSION,
                         "sources": {n: (here / n).read_text(encoding="utf-8") for n in names}})
 
@@ -76,7 +77,7 @@ def normalize_judge(response: dict, mapping: dict[str, str], study: dict, cells:
 
 
 def _manifest(study: dict) -> dict:
-    families = [{"id": f"{bp['id']}__r{rep + 1:03d}", "blueprint": bp}
+    families = [sample_family(bp, study['seed'], rep)
                 for bp in study["blueprints"] for rep in range(study["families_per_context"])]
     return {"schema_version": "1.0", "protocol": PROTOCOL_VERSION,
             "protocol_sha256": protocol_fingerprint(), "study": study,

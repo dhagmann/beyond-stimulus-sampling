@@ -25,6 +25,13 @@ MESSAGE = obj({"text": TEXT})
 ISSUE_KINDS = ["content_changed", "required_content_missing", "instruction_leakage", "incoherent", "unnatural"]
 
 
+def pool_schema(content_count: int, style_count: int) -> dict:
+    return obj({'content_pool': {'type': 'array', 'minItems': content_count,
+                                'maxItems': content_count, 'items': TEXT},
+                'style_pool': {'type': 'array', 'minItems': style_count,
+                              'maxItems': style_count, 'items': TEXT}})
+
+
 def judge_schema(study: dict, count: int) -> dict:
     scale = {"type": "number", "minimum": study["assessment"]["scale_min"],
              "maximum": study["assessment"]["scale_max"]}

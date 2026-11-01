@@ -27,6 +27,11 @@ def render(root: Path, output: Path | None = None) -> Path:
     blocks.append("<h2>Message families</h2>")
     for family in manifest["families"]:
         blocks.append(f"<h3>{esc(family['id'])}</h3><p>{esc(family['blueprint']['context'])}</p>")
+        blocks.append('<h4>Shared substantive content</h4><ul>' + ''.join(
+            f'<li>{esc(point)}</li>' for point in family['blueprint']['required_content']) + '</ul>')
+        if family['blueprint'].get('argumentation_style'):
+            blocks.append('<p><strong>Shared argumentation style:</strong> ' +
+                          esc(family['blueprint']['argumentation_style']) + '</p>')
         paths = _attempt_paths(root, family["id"])
         if not paths:
             blocks.append("<p>Not yet generated.</p>")

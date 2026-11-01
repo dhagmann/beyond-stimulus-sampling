@@ -7,9 +7,16 @@ dist/
 .env
 .env.*
 study.json
+study-planned.json
 *.setup.json
 *.proposal.json
 *.setup-calls/
+*.pool-calls/
+manuscript/*.tex
+manuscript/*.log
+manuscript/*.knit.md
+manuscript/*_files/
+manuscript/.quarto/
 runs/
 demo-run/
 .DS_Store

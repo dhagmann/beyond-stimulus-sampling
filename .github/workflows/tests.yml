@@ -15,5 +15,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install -e .
       - run: python -m unittest discover -s tests -v
+      - run: python scripts/check_manuscript_data.py
       - run: bss demo --output /tmp/bss-demo
       - run: bss validate /tmp/bss-demo

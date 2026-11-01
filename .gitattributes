@@ -1,0 +1,8 @@
+* text=auto
+*.csv text eol=lf
+# Markdown allows meaningful trailing spaces for hard line breaks.
+*.md whitespace=-blank-at-eol
+*.qmd whitespace=-blank-at-eol
+# Preserve vendored extension files and generated SVG paths as supplied.
+manuscript/_extensions/** -whitespace
+*.svg -whitespace

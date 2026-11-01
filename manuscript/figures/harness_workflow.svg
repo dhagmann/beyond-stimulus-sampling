@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="468pt" height="414pt" viewBox="0 0 468 414" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-02T02:18:59.777806</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.1, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 414 
+L 468 414 
+L 468 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 38.61936 68.82336 
+L 429.38064 68.82336 
+Q 434.88432 68.82336 434.88432 64.20312 
+L 434.88432 13.38048 
+Q 434.88432 8.76024 429.38064 8.76024 
+L 38.61936 8.76024 
+Q 33.11568 8.76024 33.11568 13.38048 
+L 33.11568 64.20312 
+Q 33.11568 68.82336 38.61936 68.82336 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.85; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 61.55136 171.81621 
+L 406.44864 171.81621 
+Q 411.95232 171.81621 411.95232 167.19597 
+L 411.95232 87.49683 
+Q 411.95232 82.87659 406.44864 82.87659 
+L 61.55136 82.87659 
+Q 56.04768 82.87659 56.04768 87.49683 
+L 56.04768 167.19597 
+Q 56.04768 171.81621 61.55136 171.81621 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #e9eff4; stroke: #405b70; stroke-width: 1.1; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 13.39416 322.93656 
+L 211.52664 322.93656 
+Q 217.03032 322.93656 217.03032 318.31632 
+L 217.03032 205.89048 
+Q 217.03032 201.27024 211.52664 201.27024 
+L 13.39416 201.27024 
+Q 7.89048 201.27024 7.89048 205.89048 
+L 7.89048 318.31632 
+Q 7.89048 322.93656 13.39416 322.93656 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #f4f6f8; stroke: #617383; stroke-width: 0.85; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 24.40152 248.6277 
+L 73.93464 248.6277 
+Q 79.43832 248.6277 79.43832 244.00746 
+L 79.43832 227.83662 
+Q 79.43832 223.21638 73.93464 223.21638 
+L 24.40152 223.21638 
+Q 18.89784 223.21638 18.89784 227.83662 
+L 18.89784 244.00746 
+Q 18.89784 248.6277 24.40152 248.6277 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.65; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 87.69384 248.6277 
+L 137.22696 248.6277 
+Q 142.73064 248.6277 142.73064 244.00746 
+L 142.73064 227.83662 
+Q 142.73064 223.21638 137.22696 223.21638 
+L 87.69384 223.21638 
+Q 82.19016 223.21638 82.19016 227.83662 
+L 82.19016 244.00746 
+Q 82.19016 248.6277 87.69384 248.6277 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.65; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 150.98616 248.6277 
+L 200.51928 248.6277 
+Q 206.02296 248.6277 206.02296 244.00746 
+L 206.02296 227.83662 
+Q 206.02296 223.21638 200.51928 223.21638 
+L 150.98616 223.21638 
+Q 145.48248 223.21638 145.48248 227.83662 
+L 145.48248 244.00746 
+Q 145.48248 248.6277 150.98616 248.6277 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.65; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 256.47336 322.93656 
+L 454.60584 322.93656 
+Q 460.10952 322.93656 460.10952 318.31632 
+L 460.10952 205.89048 
+Q 460.10952 201.27024 454.60584 201.27024 
+L 256.47336 201.27024 
+Q 250.96968 201.27024 250.96968 205.89048 
+L 250.96968 318.31632 
+Q 250.96968 322.93656 256.47336 322.93656 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #f4f6f8; stroke: #617383; stroke-width: 0.85; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 287.43156 248.6277 
+L 345.67884 248.6277 
+Q 351.18252 248.6277 351.18252 244.00746 
+L 351.18252 227.83662 
+Q 351.18252 223.21638 345.67884 223.21638 
+L 287.43156 223.21638 
+Q 281.92788 223.21638 281.92788 227.83662 
+L 281.92788 244.00746 
+Q 281.92788 248.6277 287.43156 248.6277 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.65; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 365.40036 248.6277 
+L 423.64764 248.6277 
+Q 429.15132 248.6277 429.15132 244.00746 
+L 429.15132 227.83662 
+Q 429.15132 223.21638 423.64764 223.21638 
+L 365.40036 223.21638 
+Q 359.89668 223.21638 359.89668 227.83662 
+L 359.89668 244.00746 
+Q 359.89668 248.6277 365.40036 248.6277 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.65; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 142.272 70.823283 
+Q 142.272 75.753216 142.272 79.676919 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 144.272 75.676919 
+L 142.272 79.676919 
+L 140.272 75.676919 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 325.728 80.684157 
+Q 325.728 75.754224 325.728 71.830521 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 323.728 75.830521 
+L 325.728 71.830521 
+L 327.728 75.830521 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 78.0624 174.007374 
+Q 78.0624 186.447237 78.0624 197.880868 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 80.0624 193.880868 
+L 78.0624 197.880868 
+L 76.0624 193.880868 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 165.204 198.886566 
+Q 165.204 186.446703 165.204 175.013072 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 163.204 179.013072 
+L 165.204 175.013072 
+L 167.204 179.013072 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 302.796 174.007374 
+Q 302.796 186.447237 302.796 197.880868 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 304.796 193.880868 
+L 302.796 197.880868 
+L 300.796 193.880868 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 389.9376 198.886566 
+Q 389.9376 186.446703 389.9376 175.013072 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 387.9376 179.013072 
+L 389.9376 175.013072 
+L 391.9376 179.013072 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_17">
+    <path d="M 234 174.006481 
+Q 234 253.630421 234 332.24813 
+" clip-path="url(#p65262f65d5)" style="fill: none; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+    <path d="M 236 328.24813 
+L 234 332.24813 
+L 232 328.24813 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #617383; stroke: #617383; stroke-width: 0.9; stroke-linecap: round"/>
+   </g>
+   <g id="patch_18">
+    <path d="M 34.03296 388.38996 
+L 433.96704 388.38996 
+Q 439.47072 388.38996 439.47072 383.76972 
+L 439.47072 340.64748 
+Q 439.47072 336.02724 433.96704 336.02724 
+L 34.03296 336.02724 
+Q 28.52928 336.02724 28.52928 340.64748 
+L 28.52928 383.76972 
+Q 28.52928 388.38996 34.03296 388.38996 
+z
+" clip-path="url(#p65262f65d5)" style="fill: #ffffff; stroke: #617383; stroke-width: 0.85; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="26.020473" transform="rotate(-0 234 26.020473)">Researcher</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 9.2px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(131.724031 41.938721)">Defines construct, stimulus context, construct spillover,</text>
+    <text style="font-size: 9.2px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(191.863281 51.687307)">and acceptance criteria</text>
+   </g>
+   <g id="text_3">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="104.152247" transform="rotate(-0 234 104.152247)">Main coordinating agent</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 9.2px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="119.535075" transform="rotate(-0 234 119.535075)">Routes tasks and reviews returned ratings and concerns.</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 9.2px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="135.320895" transform="rotate(-0 234 135.320895)">Applies criteria and requests targeted revisions.</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 9.2px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="151.153434" transform="rotate(-0 234 151.153434)">Surfaces unexpected issues to the Researcher.</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 10.3px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="112.4604" y="217.567554" transform="rotate(-0 112.4604 217.567554)">Writer subagents</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="49.16808" y="238.047089" transform="rotate(-0 49.16808 238.047089)">Writer 1</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="112.4604" y="238.047089" transform="rotate(-0 112.4604 238.047089)">Writer 2</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="175.75272" y="238.047089" transform="rotate(-0 175.75272 238.047089)">…</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="112.4604" y="257.345718" transform="rotate(-0 112.4604 257.345718)">Separate context for each writer</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="112.4604" y="271.546262" transform="rotate(-0 112.4604 271.546262)">Shared inputs + assigned treatment</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 8.8px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(51.207587 294.626118)">Different models can add variation</text>
+    <text style="font-size: 8.8px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(42.798087 303.950853)">e.g., ChatGPT (GPT-6.1-Sol) or Claude</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 10.3px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="355.5396" y="217.567554" transform="rotate(-0 355.5396 217.567554)">Judge subagents</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="316.5552" y="238.049522" transform="rotate(-0 316.5552 238.049522)">Judge 1</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="394.524" y="238.049522" transform="rotate(-0 394.524 238.049522)">Judge 2</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="355.5396" y="257.345718" transform="rotate(-0 355.5396 257.345718)">Separate context for each judge</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(315.611975 271.496349)">Family of stimuli with</text>
+    <text style="font-size: 8.9px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(314.019709 280.927046)">treatment labels hidden</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 8.8px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(294.286788 300.786438)">Different models can add variation</text>
+    <text style="font-size: 8.8px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(285.877287 310.111173)">e.g., ChatGPT (GPT-6.1-Sol) or Claude</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="91.8216" y="77.783261" transform="rotate(-0 91.8216 77.783261)">Instructions</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="378.4716" y="77.785585" transform="rotate(-0 378.4716 77.785585)">Unexpected issues</text>
+   </g>
+   <g id="text_22">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(19.205073 184.167922)">Generate /</text>
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(26.636597 193.17012)">revise</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="190.4292" y="188.714509" transform="rotate(-0 190.4292 188.714509)">Drafts</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="275.2776" y="188.671345" transform="rotate(-0 275.2776 188.671345)">Stimuli</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(415.984927 184.167922)">Ratings /</text>
+    <text style="font-size: 8.5px; font-family: 'Tinos', serif; fill: #23313f" transform="translate(416.111098 193.17012)">concerns</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 8.8px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="289.0368" y="331.968092" transform="rotate(-0 289.0368 331.968092)">Criteria met</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 10.6px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="356.272015" transform="rotate(-0 234 356.272015)">Experimental stimuli and audit report</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 9px; font-family: 'Tinos', serif; text-anchor: middle; fill: #23313f" x="234" y="372.87613" transform="rotate(-0 234 372.87613)">Researcher instructions, drafts, and judge ratings saved as a report</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p65262f65d5">
+   <rect x="4.68" y="4.14" width="458.64" height="385.02"/>
+  </clipPath>
+ </defs>
+</svg>

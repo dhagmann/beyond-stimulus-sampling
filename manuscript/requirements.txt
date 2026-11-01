@@ -1,0 +1,2 @@
+# Needed for preparing the blinded PDF; Quarto/R/LaTeX are installed separately.
+pikepdf==8.7.1

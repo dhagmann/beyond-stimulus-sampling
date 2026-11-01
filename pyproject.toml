@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "beyond-stimulus-sampling"
-version = "0.1.0"
+version = "0.2.0"
 description = "Guided construction and auditing of experimental messages"
 requires-python = ">=3.10"
 authors = [{name = "David Hagmann"}, {name = "Zachary Wojtowicz"}]

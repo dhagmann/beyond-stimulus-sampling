@@ -139,6 +139,21 @@ def _validate_study(study: dict[str, Any], *, reviewed: bool = True) -> None:
             raise StudyError("Each blueprint needs shared facts or substantive points")
         for fact in facts:
             _text(fact, "required_content")
+        if 'sampling' in bp:
+            pool = bp['sampling']
+            if not isinstance(pool, dict):
+                raise StudyError('Blueprint sampling must be an object')
+            for field in ('content_pool', 'style_pool'):
+                entries = pool.get(field)
+                if not isinstance(entries, list) or not entries:
+                    raise StudyError(f'{field} must be a nonempty list')
+                for entry in entries:
+                    _text(entry, field)
+                if len(set(' '.join(x.casefold().split()) for x in entries)) != len(entries):
+                    raise StudyError(f'{field} contains duplicate entries')
+            _integer(pool.get('content_per_family'), 'content_per_family')
+            if pool['content_per_family'] > len(pool['content_pool']):
+                raise StudyError('Cannot sample more content points than are available')
     _integer(study.get("families_per_context"), "families_per_context")
     _integer(study.get("seed"), "seed", 0)
     settings = study.get("generation", {})

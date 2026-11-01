@@ -1,0 +1,13 @@
+{
+  "quarto": "1.9.38",
+  "R": "4.6.2",
+  "R_packages": {
+    "knitr": "1.52",
+    "rmarkdown": "2.32",
+    "papaja": "0.1.5"
+  },
+  "pikepdf": "8.7.1",
+  "mainfont": "Tinos",
+  "pdf_engine": "xelatex",
+  "models_called_during_manuscript_build": false
+}

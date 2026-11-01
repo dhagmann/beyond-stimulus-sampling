@@ -14,6 +14,7 @@ from .report import render
 from .specification import (StudyError, dimension_summary, load_json, utc_now,
                             validate_study, write_json)
 from .workflow import export_messages, propose, run, validate_run
+from .sampling import plan
 
 
 def add_provider(parser):
@@ -48,6 +49,13 @@ def parser():
     prop.add_argument("--context", required=True)
     prop.add_argument("--output", type=Path, required=True)
     add_provider(prop)
+    pools = commands.add_parser('plan', help='propose content and organization pools for researcher review')
+    pools.add_argument('study', type=Path)
+    pools.add_argument('--output', type=Path, required=True)
+    pools.add_argument('--content-pool-size', type=int, default=15)
+    pools.add_argument('--content-per-family', type=int, default=5)
+    pools.add_argument('--style-pool-size', type=int, default=8)
+    add_provider(pools)
     review = commands.add_parser("review", help="inspect the study design and construct decisions")
     review.add_argument("study", type=Path)
     review.add_argument("--complete", action="store_true", help="record researcher review after inspecting a draft")
@@ -81,6 +89,20 @@ def main(argv=None) -> int:
                              args.output.parent / (args.output.stem + ".setup-calls"))
             write_json(args.output, result)
             print(f"Saved candidate proposal: {args.output}. Review it with bss init --proposal {args.output}")
+        elif args.action == 'plan':
+            if args.output.exists():
+                raise StudyError('The planned study file already exists; choose another output')
+            source = load_json(args.study)
+            validate_study(source)
+            config = provider_config(args, optional=True) or source['generation']['writer']
+            planned = plan(source, ModelProvider(config),
+                           args.output.parent / (args.output.stem + '.pool-calls'),
+                           content_count=args.content_pool_size,
+                           content_per_family=args.content_per_family,
+                           style_count=args.style_pool_size)
+            write_json(args.output, planned)
+            print(f'Saved pool suggestions: {args.output}. Inspect the content and styles with bss review; '
+                  'researcher acceptance is required before generation.')
         elif args.action == "review":
             study = load_json(args.study)
             validate_study(study, reviewed=False)
@@ -89,6 +111,10 @@ def main(argv=None) -> int:
             for d in study.get("candidate_review", []):
                 print(f"  {d['construct']['name']}: {d['classification']} — {d['rationale']}")
             print("\nAssessment criteria:\n" + json.dumps(study["assessment"], indent=2))
+            for blueprint in study['blueprints']:
+                if 'sampling' in blueprint:
+                    print(f"\nContent and style pools for {blueprint['id']}:\n" +
+                          json.dumps(blueprint['sampling'], indent=2, ensure_ascii=False))
             if args.complete:
                 if input("Accept this study specification for generation? (yes/no): ").strip().lower() == "yes":
                     reviewer = input("Researcher/reviewer name: ").strip()

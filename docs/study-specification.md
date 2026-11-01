@@ -9,9 +9,9 @@
 | `focal_construct` | ID of the primary manipulated dimension. |
 | `dimensions` | Definitions, anchors, roles, and any ordered levels or included facets. |
 | `candidate_review` | Candidate attributes, researcher classifications and rationales, and links to the resulting dimensions. |
-| `blueprints` | Distinct scenario IDs, contexts, and lists of required shared content. |
+| `blueprints` | Distinct scenario IDs, contexts, required shared content, and optional reviewed content/style pools. |
 | `families_per_context` | Independently generated message families for each blueprint. |
-| `seed` | Reproducible blinded message-order assignment. This is not a model sampling seed. |
+| `seed` | Reproducible pool draws and blinded message-order assignment. This is not a model sampling seed. |
 | `writing_requirements` | Optional instructions for style, audience, format, or language. |
 | `generation` | Writer, judges, word limits, allowed within-family word-count spread, and attempt limit. |
 | `assessment` | Rating scale, target/spillover thresholds, content/fluency floors, and naturalness-review threshold. |
@@ -19,6 +19,8 @@
 | `setup_provenance` | Wizard proposal fingerprint and source call ID, when created through the wizard. |
 
 Each dimension has an `id`, `name`, `definition`, `low_anchor`, `high_anchor`, and `role`. Roles are `factor`, `protected`, or `consequence`. A factor has 2–7 ordered `levels`, each with an ID and a writing instruction. A facet is stored under the focal dimension's `facets`, rather than becoming a separate measured dimension. A protected dimension may have a `hold_constant` instruction. Consequences appear only in judge requests.
+
+A blueprint can include `sampling` with a nonempty `content_pool`, `content_per_family`, and a nonempty `style_pool`. Entries are text, and duplicate entries are rejected after whitespace and case normalization. `content_per_family` cannot exceed the number of points. See [sampling](sampling.md) for the planning command, researcher review, and saved draws. Blueprints without this field remain supported.
 
 IDs use lowercase letters, numbers, and underscores, beginning with a letter. Use distinct, short IDs. The prototype supports up to 128 experimental cells per family, although the cost and interpretability of a large factorial design warrant consideration well before that limit.
 
